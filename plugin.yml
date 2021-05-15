@@ -1,0 +1,11 @@
+main: net.natroutter.minicore.MiniCore
+name: MiniCore
+version: ${project.version}
+author: NATroutter
+description: ${project.description}
+api-version: 1.16
+website: ${project.url}
+depend:
+  - Vault
+softdepend:
+  - PlaceholderAPI
