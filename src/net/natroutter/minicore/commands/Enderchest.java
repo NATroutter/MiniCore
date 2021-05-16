@@ -1,7 +1,9 @@
 package net.natroutter.minicore.commands;
 
 import net.natroutter.minicore.MiniCore;
+import net.natroutter.minicore.utilities.Effect;
 import net.natroutter.minicore.utilities.Lang;
+import net.natroutter.minicore.utilities.Settings;
 import net.natroutter.natlibs.objects.BasePlayer;
 import net.natroutter.natlibs.utilities.StringHandler;
 import org.bukkit.Bukkit;
@@ -38,6 +40,7 @@ public class Enderchest extends Command {
 			} else {
 				p.sendMessage(lang.Prefix + lang.NoPerm);
 			}
+			Effect.sound(p, Settings.Sound.enderChest());
 			
 		} else if (args.length == 1) {
 			if (p.hasPermission("minicore.enderchest.other")) {
@@ -47,14 +50,18 @@ public class Enderchest extends Command {
 					p.sendMessage(lang.Prefix + lang.InvalidPlayer);
 					return false;
 				}
-				
-				p.openInventory(target.getEnderChest());
+
 				if (!p.getUniqueId().equals(target.getUniqueId())) {
+					p.openInventory(target.getEnderChest());
 					StringHandler message = new StringHandler(lang.EnderChestOpenedOther);
 					message.setPrefix(lang.Prefix);
 					message.replaceAll("{player}", target.getName());
 					message.send(p);
+				} else {
+					p.openInventory(p.getEnderChest());
+					p.sendMessage(lang.Prefix + lang.EnderChestOpened);
 				}
+				Effect.sound(p, Settings.Sound.enderChest());
 				
 			} else {
 				p.sendMessage(lang.Prefix + lang.NoPerm);

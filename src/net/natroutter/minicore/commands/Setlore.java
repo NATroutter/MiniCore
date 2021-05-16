@@ -1,7 +1,9 @@
 package net.natroutter.minicore.commands;
 
 import net.natroutter.minicore.MiniCore;
+import net.natroutter.minicore.utilities.Effect;
 import net.natroutter.minicore.utilities.Lang;
+import net.natroutter.minicore.utilities.Settings;
 import net.natroutter.natlibs.objects.BaseItem;
 import net.natroutter.natlibs.objects.BasePlayer;
 import net.natroutter.natlibs.utilities.StringHandler;
@@ -33,7 +35,10 @@ public class Setlore extends Command {
 			p.sendMessage(lang.Prefix + lang.InvalidArgs);
 			
 		} else {
-			StringHandler lore = new StringHandler(args, ' ').replaceColors();
+			StringHandler lore = new StringHandler(args, ' ');
+			if (p.hasPermission("minicore.setlore.color")) {
+				lore.replaceColors();
+			}
 
 			BaseItem item = BaseItem.from(p.getInventory().getItemInMainHand());
 
@@ -41,6 +46,7 @@ public class Setlore extends Command {
 				item.setLore(lore.split('|'));
 				p.updateInventory();
 				p.sendMessage(lang.Prefix + lang.LoreChanged);
+				Effect.sound(p, Settings.Sound.modified());
 
 			} else {
 				p.sendMessage(lang.Prefix + lang.InvalidItem);

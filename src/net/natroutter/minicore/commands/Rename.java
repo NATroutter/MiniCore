@@ -1,7 +1,9 @@
 package net.natroutter.minicore.commands;
 
 import net.natroutter.minicore.MiniCore;
+import net.natroutter.minicore.utilities.Effect;
 import net.natroutter.minicore.utilities.Lang;
+import net.natroutter.minicore.utilities.Settings;
 import net.natroutter.natlibs.objects.BaseItem;
 import net.natroutter.natlibs.objects.BasePlayer;
 import net.natroutter.natlibs.utilities.StringHandler;
@@ -34,12 +36,16 @@ public class Rename extends Command {
 			
 		} else {
 			StringHandler name = new StringHandler(args, ' ');
+			if (p.hasPermission("minicore.rename.color")) {
+				name.replaceColors();
+			}
 			BaseItem item = BaseItem.from(p.getInventory().getItemInMainHand());
 
 			if (!item.getType().equals(Material.AIR)) {
 				item.setDisplayName(name.build());
 				p.updateInventory();
 				p.sendMessage(lang.Prefix + lang.ItemRenamed);
+				Effect.sound(p, Settings.Sound.modified());
 
 			} else {
 				p.sendMessage(lang.Prefix + lang.InvalidItem);

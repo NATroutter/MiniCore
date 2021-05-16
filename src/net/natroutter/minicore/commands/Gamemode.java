@@ -1,7 +1,9 @@
 package net.natroutter.minicore.commands;
 
 import net.natroutter.minicore.MiniCore;
+import net.natroutter.minicore.utilities.Effect;
 import net.natroutter.minicore.utilities.Lang;
+import net.natroutter.minicore.utilities.Settings;
 import net.natroutter.natlibs.objects.BasePlayer;
 import net.natroutter.natlibs.utilities.StringHandler;
 import org.bukkit.Bukkit;
@@ -35,7 +37,7 @@ public class Gamemode extends Command {
 				return null;
 		}
 	}
-	
+
 	private String getGamemodeName(GameMode gm) {
 		switch(gm) {
 			case SURVIVAL:
@@ -72,6 +74,8 @@ public class Gamemode extends Command {
 					
 					p.setGameMode(gm);
 					message.send(p);
+					Effect.sound(p, Settings.Sound.gamemode());
+					Effect.particle(Settings.Particle.gamemode(p.getLocation()));
 					
 				} else {
 					p.sendMessage(lang.Prefix + lang.InvalidGamemode);
@@ -100,8 +104,13 @@ public class Gamemode extends Command {
 					message1.setPrefix(lang.Prefix);
 					message1.replace("{player}", target.getName());
 					message1.replace("{gamemode}", getGamemodeName(gm));
-					
-					p.setGameMode(gm);
+
+					Effect.sound(p, Settings.Sound.gamemode());
+					Effect.sound(target, Settings.Sound.gamemode());
+
+					Effect.particle(Settings.Particle.gamemode(target.getLocation()));
+
+					target.setGameMode(gm);
 					message.send(target);
 					if (!target.getUniqueId().equals(p.getUniqueId())) {
 						message1.send(p);

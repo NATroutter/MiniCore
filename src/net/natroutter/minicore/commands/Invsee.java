@@ -1,7 +1,9 @@
 package net.natroutter.minicore.commands;
 
 import net.natroutter.minicore.MiniCore;
+import net.natroutter.minicore.utilities.Effect;
 import net.natroutter.minicore.utilities.Lang;
+import net.natroutter.minicore.utilities.Settings;
 import net.natroutter.natlibs.objects.BasePlayer;
 import net.natroutter.natlibs.utilities.StringHandler;
 import org.bukkit.Bukkit;
@@ -48,6 +50,8 @@ public class Invsee extends Command {
 					message.replaceAll("{player}", target.getName());
 					message.send(p);
 				}
+
+				Effect.sound(p, Settings.Sound.chest());
 				
 			} else {
 				p.sendMessage(lang.Prefix + lang.NoPerm);

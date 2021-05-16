@@ -1,7 +1,9 @@
 package net.natroutter.minicore.commands;
 
 import net.natroutter.minicore.MiniCore;
+import net.natroutter.minicore.utilities.Effect;
 import net.natroutter.minicore.utilities.Lang;
+import net.natroutter.minicore.utilities.Settings;
 import net.natroutter.natlibs.handlers.Database.YamlDatabase;
 import net.natroutter.natlibs.objects.BasePlayer;
 import org.bukkit.command.Command;
@@ -15,7 +17,7 @@ public class Setspawn extends Command {
 	
 	public Setspawn() {
 		super("");
-		this.setPermission("hubcore.setspawn");
+		this.setPermission("minicore.setspawn");
 		this.setPermissionMessage(lang.Prefix + lang.NoPerm);
 	}
 
@@ -31,6 +33,8 @@ public class Setspawn extends Command {
 			database.saveLoc("General", "SpawnLoc", p.getLocation());
 			p.getWorld().setSpawnLocation(p.getLocation());
 			p.sendMessage(lang.Prefix + lang.SpawnSet);
+			Effect.sound(p, Settings.Sound.setspawn());
+			Effect.particle(Settings.Particle.Success(p.getLocation()));
 		} else {
 			p.sendMessage(lang.Prefix + lang.ToomanyArgs);
 		}

@@ -38,6 +38,7 @@ public class ChatFormater implements Listener {
 
         StringHandler format = new StringHandler(cfg.ChatFormat);
         format.replaceAll("{prefix}", prefix);
+        format.replaceAll("{name}", p.getName());
         format.replaceAll("{displayname}", p.getDisplayName());
         format.replaceAll("{message}", message);
         format.replaceAll("{suffix}", suffix);

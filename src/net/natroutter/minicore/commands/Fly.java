@@ -1,7 +1,9 @@
 package net.natroutter.minicore.commands;
 
 import net.natroutter.minicore.MiniCore;
+import net.natroutter.minicore.utilities.Effect;
 import net.natroutter.minicore.utilities.Lang;
+import net.natroutter.minicore.utilities.Settings;
 import net.natroutter.natlibs.objects.BasePlayer;
 import net.natroutter.natlibs.utilities.StringHandler;
 import org.bukkit.Bukkit;
@@ -20,7 +22,7 @@ public class Fly extends Command {
 	private void ToggleFly(BasePlayer p, boolean state) {
 		StringHandler message = new StringHandler(lang.ToggleFly);
 		message.setPrefix(lang.Prefix);
-		message.replaceAll("{State}", getState(state));
+		message.replaceAll("{state}", getState(state));
 				
 		p.setAllowFlight(state);
 		p.setFlying(state);
@@ -44,6 +46,8 @@ public class Fly extends Command {
 		if (args.length == 0) {
 			if (p.hasPermission("minicore.fly")) {
 				ToggleFly(p, !p.getAllowFlight());
+				Effect.sound(p, Settings.Sound.fly());
+				Effect.particle(Settings.Particle.fly(p.getLocation()));
 			} else {
 				p.sendMessage(lang.Prefix + lang.NoPerm);
 			}
@@ -67,6 +71,10 @@ public class Fly extends Command {
 					message.send(p);
 				}
 				ToggleFly(target, newState);
+				Effect.sound(p, Settings.Sound.fly());
+				Effect.sound(target, Settings.Sound.fly());
+
+				Effect.particle(Settings.Particle.fly(target.getLocation()));
 				
 			} else {
 				p.sendMessage(lang.Prefix + lang.NoPerm);

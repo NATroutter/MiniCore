@@ -1,0 +1,55 @@
+package net.natroutter.minicore.commands;
+
+import net.natroutter.minicore.MiniCore;
+import net.natroutter.minicore.utilities.Config;
+import net.natroutter.minicore.utilities.Effect;
+import net.natroutter.minicore.utilities.Lang;
+import net.natroutter.minicore.utilities.Settings;
+import net.natroutter.natlibs.objects.BasePlayer;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+
+public class Top extends Command {
+
+    public Top() {
+        super("");
+        this.setPermission("minicore.top");
+        this.setPermissionMessage(lang.NoPerm);
+    }
+
+    private final Lang lang = MiniCore.getLang();
+    private final Config config = MiniCore.getConf();
+
+    @Override
+    public boolean execute(CommandSender sender, String label, String[] args) {
+        if (!(sender instanceof Player)) {
+            sender.sendMessage(lang.OnlyIngame);
+            return false;
+        }
+        BasePlayer p = BasePlayer.from(sender);
+
+        if (args.length == 0) {
+
+            Effect.particle(Settings.Particle.teleportStart(p.getLocation()));
+
+            int highest = p.getWorld().getHighestBlockYAt(p.getLocation());
+            Location ploc = p.getLocation();
+            ploc.setY(highest+1);
+            p.teleport(ploc);
+
+            Effect.particle(Settings.Particle.teleportEnd(ploc));
+            Effect.sound(p, Settings.Sound.teleported());
+            p.sendMessage(lang.Prefix + lang.TeleportedToTop);
+
+        } else {
+            p.sendMessage(lang.Prefix + lang.ToomanyArgs);
+        }
+        return false;
+    }
+}
+
+

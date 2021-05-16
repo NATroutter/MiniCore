@@ -1,7 +1,10 @@
 package net.natroutter.minicore.commands;
 
 import net.natroutter.minicore.MiniCore;
+import net.natroutter.minicore.objects.SoundSettings;
+import net.natroutter.minicore.utilities.Effect;
 import net.natroutter.minicore.utilities.Lang;
+import net.natroutter.minicore.utilities.Settings;
 import net.natroutter.natlibs.objects.BasePlayer;
 import net.natroutter.natlibs.utilities.StringHandler;
 import net.natroutter.natlibs.utilities.Utilities;
@@ -9,6 +12,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.TraderLlama;
 
 public class Speed extends Command {
 
@@ -102,6 +106,8 @@ public class Speed extends Command {
 					return true;
 				}
 				ChangeSpeed(p, SpeedType.Walking, speed);
+				Effect.sound(p, Settings.Sound.speed());
+				Effect.particle(Settings.Particle.speed(p.getLocation()));
 				return true;
 				
 			} else {
@@ -139,11 +145,16 @@ public class Speed extends Command {
 				message.replaceAll("{player}", target.getName());
 				message.replaceAll("{type}", type.getName());
 				message.replaceAll("{speed}", speed.toString());
-				
-				ChangeSpeed(target, type, speed);
+
 				if (!target.getUniqueId().equals(p.getUniqueId())) {
+					ChangeSpeed(target, type, speed);
 					message.send(p);
+				} else {
+					ChangeSpeed(p, type, speed);
 				}
+				Effect.sound(target, Settings.Sound.speed());
+				Effect.sound(p, Settings.Sound.speed());
+				Effect.particle(Settings.Particle.speed(p.getLocation()));
 				return true;
 				
 			} else {

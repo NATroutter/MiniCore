@@ -1,11 +1,14 @@
 package net.natroutter.minicore.commands;
 
 import net.natroutter.minicore.MiniCore;
+import net.natroutter.minicore.utilities.Effect;
 import net.natroutter.minicore.utilities.Lang;
+import net.natroutter.minicore.utilities.Settings;
 import net.natroutter.natlibs.handlers.Database.YamlDatabase;
 import net.natroutter.natlibs.objects.BasePlayer;
 import net.natroutter.natlibs.objects.ParticleSettings;
 import net.natroutter.natlibs.utilities.Utilities;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
@@ -20,14 +23,7 @@ public class Spawn extends Command {
 	}
 
 	private final Lang lang = MiniCore.getLang();
-	private final Utilities utils = MiniCore.getUtilities();
 	private final YamlDatabase database = MiniCore.getYamlDatabase();
-	
-	private ParticleSettings PartSet(BasePlayer p) {
-		return new ParticleSettings(Particle.DRAGON_BREATH, p.getLocation(),
-				100, 0.5, 1, 0.5, 0
-		);
-	}
 
 	@Override
 	public boolean execute(CommandSender sender, String label, String[] args) {
@@ -42,14 +38,39 @@ public class Spawn extends Command {
 			Location loc = database.getLocation("General", "SpawnLoc");
 
 			if (loc != null) {
-				utils.spawnParticleInRadius(PartSet(p), 10);
-				
+				Effect.particle(Settings.Particle.teleportStart(p.getLocation()));
 				p.teleport(loc);
+				Effect.particle(Settings.Particle.teleportEnd(loc));
+				Effect.sound(p, Settings.Sound.teleported());
+
 				p.playSound(p.getLocation(), Sound.BLOCK_RESPAWN_ANCHOR_CHARGE, 1, 50);
 				p.sendMessage(lang.Prefix + lang.TeleportedToSpawn);
 			} else {
 				p.sendMessage(lang.Prefix + lang.SpawnNotset);
 			}
+
+		} else if (args.length == 1) {
+			BasePlayer target = BasePlayer.from(Bukkit.getPlayer(args[0]));
+			if (target == null || !target.isOnline()) {
+				p.sendMessage(lang.Prefix + lang.InvalidPlayer);
+				return false;
+			}
+
+			Location loc = database.getLocation("General", "SpawnLoc");
+
+			if (loc != null) {
+				Effect.particle(Settings.Particle.teleportStart(target.getLocation()));
+				target.teleport(loc);
+				Effect.particle(Settings.Particle.teleportEnd(loc));
+				Effect.sound(p, Settings.Sound.teleported());
+				Effect.sound(target, Settings.Sound.teleported());
+
+				p.playSound(p.getLocation(), Sound.BLOCK_RESPAWN_ANCHOR_CHARGE, 1, 50);
+				p.sendMessage(lang.Prefix + lang.TeleportedToSpawn);
+			} else {
+				p.sendMessage(lang.Prefix + lang.SpawnNotset);
+			}
+
 			
 		} else {
 			p.sendMessage(lang.Prefix + lang.ToomanyArgs);
