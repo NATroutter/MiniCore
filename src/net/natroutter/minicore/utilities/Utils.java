@@ -3,7 +3,10 @@ package net.natroutter.minicore.utilities;
 import net.natroutter.minicore.MiniCore;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
+import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.PluginDescriptionFile;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.ArrayList;
 
@@ -47,5 +50,19 @@ public class Utils {
             default:
                 return null;
         }
+    }
+
+    public static void FancyPluginMessage(JavaPlugin pl) {
+        ConsoleCommandSender Console = pl.getServer().getConsoleSender();
+        PluginDescriptionFile pdf = pl.getDescription();
+        Console.sendMessage("§5                                                  ");
+        Console.sendMessage("§5      __  __ _      _  ___                        ");
+        Console.sendMessage("§5     |  \\/  (_)_ _ (_)/ __|___ _ _ ___            ");
+        Console.sendMessage("§5     | |\\/| | | ' \\| | (__/ _ \\ '_/ -_)           ");
+        Console.sendMessage("§5     |_|  |_|_|_||_|_|\\___\\___/_| \\___|           ");
+        Console.sendMessage("§5                                                  ");
+        Console.sendMessage("§5Loading version §d"+pdf.getVersion()+" §5on §d" + Bukkit.getServer().getName() + " §5- §d" + Bukkit.getServer().getVersion());
+        Console.sendMessage("§d       Minicore created by §dNATroutter             ");
+        Console.sendMessage("§5	                                                 ");
     }
 }

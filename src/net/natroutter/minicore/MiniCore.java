@@ -6,6 +6,7 @@ import net.natroutter.minicore.handlers.Database.Database;
 import net.natroutter.minicore.handlers.Hooks;
 import net.natroutter.minicore.utilities.Config;
 import net.natroutter.minicore.utilities.Lang;
+import net.natroutter.minicore.utilities.Utils;
 import net.natroutter.natlibs.NATLibs;
 import net.natroutter.natlibs.handlers.Database.YamlDatabase;
 import net.natroutter.natlibs.handlers.EventManager;
@@ -84,6 +85,8 @@ public class MiniCore extends JavaPlugin {
                 StatusMessages.class,
                 SpawnHandler.class
         );
+
+        Utils.FancyPluginMessage(this);
 
     }
 }
