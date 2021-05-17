@@ -16,6 +16,8 @@ import org.bukkit.event.player.*;
 import org.bukkit.event.vehicle.VehicleEnterEvent;
 import org.bukkit.event.vehicle.VehicleExitEvent;
 
+import javax.xml.crypto.Data;
+
 public class InfoHandler implements Listener {
 
     private static final Utilities utils = MiniCore.getUtilities();
@@ -93,7 +95,7 @@ public class InfoHandler implements Listener {
                 Player onlineP = p.getPlayer();
                 if (onlineP != null) {
                     if (onlineP.getAddress() != null) {
-                        data.setIp(onlineP.getAddress().getHostName());
+                        data.setIp(onlineP.getAddress().getAddress().toString());
                     }
                     data.setDisplayname(onlineP.getDisplayName());
                     data.setLastloc(utils.serializeLocation(onlineP.getLocation(), sep));
@@ -109,12 +111,12 @@ public class InfoHandler implements Listener {
                     data.setFlying(onlineP.isFlying());
                     data.setAllowedfly(onlineP.getAllowFlight());
                     data.setInvehicle(onlineP.isInsideVehicle());
+                    data.setLastplayed(System.currentTimeMillis());
                 }
             }
             data.setName(p.getName());
             data.setOnline(p.isOnline());
             data.setFirstplayed(p.getFirstPlayed());
-            data.setLastplayed(p.getLastPlayed());
             if (p.getBedSpawnLocation() != null) {
                 data.setBedlocation(utils.serializeLocation(p.getBedSpawnLocation(), sep));
             } else {

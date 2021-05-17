@@ -82,7 +82,7 @@ public class Show extends Command {
     }
 
     public String printBool(Boolean value) {
-        return value ? lang.ToggleStates.enabled : lang.ToggleStates.disabled;
+        return value ? lang.Statues.yes : lang.Statues.no;
     }
 
     @Override

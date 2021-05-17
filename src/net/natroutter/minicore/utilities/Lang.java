@@ -21,7 +21,7 @@ public class Lang {
     public String InvalidPlayer = "§7Invalid Player!";
     public String InvalidGamemode = "§7That is not a valid gamemode";
     public String GamemodeChanged = "§7Your gamemode has been changed to §c{gamemode}";
-    public String GamemodeChangedOther = "§c{player}§7' gamemode has been changed to §c{gamemode}";
+    public String GamemodeChangedOther = "§c{player}§7's gamemode has been changed to §c{gamemode}";
     public String ItemRenamed = "§7Item has been renamed!";
     public String InvalidItem = "§7You are not holding an item!";
     public String LoreChanged = "§7Items lore has been changed!";
@@ -112,6 +112,12 @@ public class Lang {
     public static class ToggleStates {
         public String enabled = "Enabled";
         public String disabled = "Disabled";
+    }
+
+    public Statues Statues = new Statues();
+    public static class Statues {
+        public String yes = "Yes";
+        public String no = "No";
     }
 
     public SpeedTypes SpeedTypes = new SpeedTypes();
