@@ -11,6 +11,9 @@ import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 public class Addlore extends Command {
 
@@ -52,5 +55,10 @@ public class Addlore extends Command {
             }
         }
         return false;
+    }
+
+    @Override
+    public List<String> tabComplete(CommandSender sender, String alias, String[] args) throws IllegalArgumentException {
+        return null;
     }
 }

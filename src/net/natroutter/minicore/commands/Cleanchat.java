@@ -13,6 +13,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.Collections;
+import java.util.List;
 
 public class Cleanchat extends Command {
 
@@ -49,5 +50,10 @@ public class Cleanchat extends Command {
         }
 
         return false;
+    }
+
+    @Override
+    public List<String> tabComplete(CommandSender sender, String alias, String[] args) throws IllegalArgumentException {
+        return null;
     }
 }

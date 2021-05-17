@@ -1,8 +1,9 @@
-package net.natroutter.minicore.handlers;
+package net.natroutter.minicore.handlers.features;
 
 import me.clip.placeholderapi.PlaceholderAPI;
 import net.milkbowl.vault.chat.Chat;
 import net.natroutter.minicore.MiniCore;
+import net.natroutter.minicore.handlers.Hooks;
 import net.natroutter.minicore.utilities.Config;
 import net.natroutter.natlibs.objects.BasePlayer;
 import net.natroutter.natlibs.utilities.StringHandler;

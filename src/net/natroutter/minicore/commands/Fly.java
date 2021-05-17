@@ -1,15 +1,19 @@
 package net.natroutter.minicore.commands;
 
 import net.natroutter.minicore.MiniCore;
+import net.natroutter.minicore.handlers.features.InfoHandler;
 import net.natroutter.minicore.utilities.Effect;
 import net.natroutter.minicore.utilities.Lang;
 import net.natroutter.minicore.utilities.Settings;
+import net.natroutter.minicore.utilities.Utils;
 import net.natroutter.natlibs.objects.BasePlayer;
 import net.natroutter.natlibs.utilities.StringHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+
+import java.util.List;
 
 public class Fly extends Command {
 
@@ -23,10 +27,11 @@ public class Fly extends Command {
 		StringHandler message = new StringHandler(lang.ToggleFly);
 		message.setPrefix(lang.Prefix);
 		message.replaceAll("{state}", getState(state));
-				
+
 		p.setAllowFlight(state);
 		p.setFlying(state);
 		message.send(p);
+		InfoHandler.updatePlayer(p);
 	}
 	
 	private String getState(boolean state) {
@@ -60,21 +65,27 @@ public class Fly extends Command {
 					return false;
 				}
 			
-				boolean newState = !target.getAllowFlight();
-				
-				StringHandler message = new StringHandler(lang.ToggleFlyOther);
-				message.setPrefix(lang.Prefix);
-				message.replaceAll("{player}", target.getName());
-				message.replaceAll("{state}", getState(newState));
-				
 				if (!target.getUniqueId().equals(p.getUniqueId())) {
-					message.send(p);
-				}
-				ToggleFly(target, newState);
-				Effect.sound(p, Settings.Sound.fly());
-				Effect.sound(target, Settings.Sound.fly());
+					boolean newState = !target.getAllowFlight();
 
-				Effect.particle(Settings.Particle.fly(target.getLocation()));
+					StringHandler message = new StringHandler(lang.ToggleFlyOther);
+					message.setPrefix(lang.Prefix);
+					message.replaceAll("{player}", target.getName());
+					message.replaceAll("{state}", getState(newState));
+
+					if (!target.getUniqueId().equals(p.getUniqueId())) {
+						message.send(p);
+					}
+					ToggleFly(target, newState);
+					Effect.sound(p, Settings.Sound.fly());
+					Effect.sound(target, Settings.Sound.fly());
+
+					Effect.particle(Settings.Particle.fly(target.getLocation()));
+				} else {
+					ToggleFly(p, !p.getAllowFlight());
+					Effect.sound(p, Settings.Sound.fly());
+					Effect.particle(Settings.Particle.fly(p.getLocation()));
+				}
 				
 			} else {
 				p.sendMessage(lang.Prefix + lang.NoPerm);
@@ -84,6 +95,14 @@ public class Fly extends Command {
 		}
 		
 		return false;
+	}
+
+	@Override
+	public List<String> tabComplete(CommandSender sender, String alias, String[] args) throws IllegalArgumentException {
+		if (args.length == 1) {
+			return Utils.playerNameList();
+		}
+		return null;
 	}
 	
 }

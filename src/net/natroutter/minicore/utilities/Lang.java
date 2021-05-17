@@ -48,6 +48,40 @@ public class Lang {
     public String TeleportedToYou = "§c{player} §7Teleported to you";
     public String AllPlayersTeleported = "§7All players teleported to you";
     public String CantTargetYourSelf = "§7Target can't be you!";
+    public String GodToggled = "§7Godmode §c{status}";
+    public String GodToggledOther = "§c{player}§7's Godmode §c{status}";
+    public String Unknown = "Unknown";
+    public String Joined = "§c{player}§7 joined the server";
+    public String Quit = "§c{player}§7 left the server";
+    public String FirstTimeWelcome = "§c{player}§7 is a new player!";
+
+    public String LocationFormat = "§8(§c{world}§7, §c{x}§7, §c{y}§7, §c{z}§7, §c{pitch}§7, §c{yaw}§8)";
+
+    public List<String> ShowFormat = new ArrayList<>() {{
+        add("§c§l-------+ §4§lMiniCore §c§l+-------");
+        add("§7UUID§8: §c{uuid}");
+        add("§7Name§8: §c{name}");
+        add("§7DisplayName§8: §c{displayname}");
+        add("§7Online§8: §c{online}");
+        add("§7Ip Address§8: §c{ip}");
+        add("§7Last Location§8: §c{lastloc}");
+        add("§7Locale§8: §c{locale}");
+        add("§7Health§8: §c{health}§8/§c{maxhealth}");
+        add("§7Food§8: §c{food}§8/§c{maxfood}");
+        add("§7Level§8: §c{level}");
+        add("§7Gamemode§8: §c{gamemode}");
+        add("§7Flying speed§8: §c{flyspeed}");
+        add("§7Walking speed§8: §c{walkspeed}");
+        add("§7World§8: §c{world}");
+        add("§7First Played§8: §c{firstplayed}");
+        add("§7Last Played§8: §c{lastplayed}");
+        add("§7Bed Location§8: §c{bedlocation}");
+        add("§7Flying§8: §c{flying}");
+        add("§7Allowed Fly§8: §c{allowfly}");
+        add("§7Inside Vehicle§8: §c{invehicle}");
+        add("§7God§8: §c{god}");
+        add("§c§l-------+ §4§lMiniCore §c§l+-------");
+    }};
 
     public ListFormat ListFormat = new ListFormat();
     public static class ListFormat {

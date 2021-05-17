@@ -4,6 +4,7 @@ import net.natroutter.minicore.MiniCore;
 import net.natroutter.minicore.utilities.Effect;
 import net.natroutter.minicore.utilities.Lang;
 import net.natroutter.minicore.utilities.Settings;
+import net.natroutter.minicore.utilities.Utils;
 import net.natroutter.natlibs.objects.BasePlayer;
 import net.natroutter.natlibs.utilities.StringHandler;
 import org.bukkit.Bukkit;
@@ -12,7 +13,10 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 
 public class Gamemode extends Command {
 
@@ -22,36 +26,8 @@ public class Gamemode extends Command {
 		super("");
 		this.setAliases(Collections.singletonList("gm"));
 	}
-	
-	private GameMode ValidateGamemode(String gm) {
-		switch(gm.toLowerCase()) {
-			case "s": case "0": case "survival":
-				return GameMode.SURVIVAL;
-			case "c": case "1": case "creative":
-				return GameMode.CREATIVE;
-			case "a": case "2": case "adventure":
-				return GameMode.ADVENTURE;
-			case "sp": case "3": case "spectator":
-				return GameMode.SPECTATOR;
-			default:
-				return null;
-		}
-	}
 
-	private String getGamemodeName(GameMode gm) {
-		switch(gm) {
-			case SURVIVAL:
-				return lang.GameModes.Survival;
-			case CREATIVE:
-				return lang.GameModes.Creative;
-			case ADVENTURE:
-				return lang.GameModes.Adventure;
-			case SPECTATOR:
-				return lang.GameModes.Spectator;
-			default:
-				return null;
-		}
-	}
+
 	
 	@Override
 	public boolean execute(CommandSender sender, String label, String[] args) {
@@ -65,12 +41,12 @@ public class Gamemode extends Command {
 		if (args.length == 1) {
 			if (p.hasPermission("minicore.gamemode")) {
 				
-				GameMode gm = ValidateGamemode(args[0]);
+				GameMode gm = Utils.ValidateGamemode(args[0]);
 				if (gm != null) {
 					
 					StringHandler message = new StringHandler(lang.GamemodeChanged);
 					message.setPrefix(lang.Prefix);
-					message.replace("{gamemode}", getGamemodeName(gm));
+					message.replace("{gamemode}", Utils.getGamemodeName(gm));
 					
 					p.setGameMode(gm);
 					message.send(p);
@@ -93,29 +69,40 @@ public class Gamemode extends Command {
 					return false;
 				}
 			
-				GameMode gm = ValidateGamemode(args[0]);
+				GameMode gm = Utils.ValidateGamemode(args[0]);
 				if (gm != null) {
-					
-					StringHandler message = new StringHandler(lang.GamemodeChanged);
-					message.setPrefix(lang.Prefix);
-					message.replace("{gamemode}", getGamemodeName(gm));
-					
-					StringHandler message1 = new StringHandler(lang.GamemodeChangedOther);
-					message1.setPrefix(lang.Prefix);
-					message1.replace("{player}", target.getName());
-					message1.replace("{gamemode}", getGamemodeName(gm));
 
-					Effect.sound(p, Settings.Sound.gamemode());
-					Effect.sound(target, Settings.Sound.gamemode());
-
-					Effect.particle(Settings.Particle.gamemode(target.getLocation()));
-
-					target.setGameMode(gm);
-					message.send(target);
 					if (!target.getUniqueId().equals(p.getUniqueId())) {
-						message1.send(p);
+						StringHandler message = new StringHandler(lang.GamemodeChanged);
+						message.setPrefix(lang.Prefix);
+						message.replace("{gamemode}", Utils.getGamemodeName(gm));
+
+						StringHandler message1 = new StringHandler(lang.GamemodeChangedOther);
+						message1.setPrefix(lang.Prefix);
+						message1.replace("{player}", target.getName());
+						message1.replace("{gamemode}", Utils.getGamemodeName(gm));
+
+						Effect.sound(p, Settings.Sound.gamemode());
+						Effect.sound(target, Settings.Sound.gamemode());
+
+						Effect.particle(Settings.Particle.gamemode(target.getLocation()));
+
+						target.setGameMode(gm);
+						message.send(target);
+						if (!target.getUniqueId().equals(p.getUniqueId())) {
+							message1.send(p);
+						}
+					} else {
+						StringHandler message = new StringHandler(lang.GamemodeChanged);
+						message.setPrefix(lang.Prefix);
+						message.replace("{gamemode}", Utils.getGamemodeName(gm));
+
+						p.setGameMode(gm);
+						message.send(p);
+						Effect.sound(p, Settings.Sound.gamemode());
+						Effect.particle(Settings.Particle.gamemode(p.getLocation()));
 					}
-					
+
 				} else {
 					p.sendMessage(lang.Prefix + lang.InvalidGamemode);
 				}
@@ -129,5 +116,19 @@ public class Gamemode extends Command {
 		
 		return false;
 	}
-	
+
+	public List<String> gamemodeNames(){
+		return Arrays.asList("0", "1", "2", "3", "s", "c", "a", "sp", "survival", "creative", "adventure", "spectator");
+	}
+
+	@Override
+	public List<String> tabComplete(CommandSender sender, String alias, String[] args) throws IllegalArgumentException {
+		if (args.length == 1) {
+			return gamemodeNames();
+		} else if (args.length == 2) {
+			return Utils.playerNameList();
+		}
+		return null;
+	}
+
 }

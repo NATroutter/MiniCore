@@ -1,10 +1,9 @@
 package net.natroutter.minicore;
 
 import net.natroutter.minicore.commands.*;
-import net.natroutter.minicore.handlers.ChatFormater;
+import net.natroutter.minicore.handlers.features.*;
 import net.natroutter.minicore.handlers.Database.Database;
 import net.natroutter.minicore.handlers.Hooks;
-import net.natroutter.minicore.handlers.features.GodHandler;
 import net.natroutter.minicore.utilities.Config;
 import net.natroutter.minicore.utilities.Lang;
 import net.natroutter.natlibs.NATLibs;
@@ -21,13 +20,8 @@ public class MiniCore extends JavaPlugin {
     /*
         TODO
         Add commands:
-            god, show, msg, reply, socialspy
+            msg, reply, socialspy, homes tpa tpahere, tpaccept, tpdeny
 
-        Particelit ja äänet komentoihin config disable/enable
-        Tab complete kaikkiin komentoihin!
-        SignColor
-        join/quit messages custom and disable config
-        spawnaus spawnille kuollessa sänky mahollisuus
     */
 
     private static Hooks hooks;
@@ -67,6 +61,7 @@ public class MiniCore extends JavaPlugin {
                 new CondCommand(Feed.class, config.EnabledFeatures.Feed),
                 new CondCommand(Fly.class, config.EnabledFeatures.Fly),
                 new CondCommand(Gamemode.class, config.EnabledFeatures.Gamemode),
+                new CondCommand(God.class, config.EnabledFeatures.God),
                 new CondCommand(Heal.class, config.EnabledFeatures.Heal),
                 new CondCommand(Invsee.class, config.EnabledFeatures.Invsee),
                 new CondCommand(List.class, config.EnabledFeatures.List),
@@ -74,13 +69,21 @@ public class MiniCore extends JavaPlugin {
                 new CondCommand(Rename.class, config.EnabledFeatures.Rename),
                 new CondCommand(Setlore.class, config.EnabledFeatures.SetLore),
                 new CondCommand(Setspawn.class, config.EnabledFeatures.SetSpawn),
+                new CondCommand(Show.class, config.EnabledFeatures.Show),
                 new CondCommand(Spawn.class, config.EnabledFeatures.Spawn),
                 new CondCommand(Speed.class, config.EnabledFeatures.Speed),
                 new CondCommand(Top.class, config.EnabledFeatures.Top),
                 new CondCommand(Tpall.class, config.EnabledFeatures.Tpall),
                 new CondCommand(Tphere.class, config.EnabledFeatures.Tphere)
         );
-        evm.RegisterListeners(ChatFormater.class, GodHandler.class);
+        evm.RegisterListeners(
+                ChatFormater.class,
+                GodHandler.class,
+                InfoHandler.class,
+                SignColors.class,
+                StatusMessages.class,
+                SpawnHandler.class
+        );
 
     }
 }

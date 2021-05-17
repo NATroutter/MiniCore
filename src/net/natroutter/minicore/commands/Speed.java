@@ -1,18 +1,25 @@
 package net.natroutter.minicore.commands;
 
 import net.natroutter.minicore.MiniCore;
+import net.natroutter.minicore.handlers.features.InfoHandler;
 import net.natroutter.minicore.objects.SoundSettings;
 import net.natroutter.minicore.utilities.Effect;
 import net.natroutter.minicore.utilities.Lang;
 import net.natroutter.minicore.utilities.Settings;
+import net.natroutter.minicore.utilities.Utils;
 import net.natroutter.natlibs.objects.BasePlayer;
 import net.natroutter.natlibs.utilities.StringHandler;
 import net.natroutter.natlibs.utilities.Utilities;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Flying;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.TraderLlama;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class Speed extends Command {
 
@@ -26,7 +33,7 @@ public class Speed extends Command {
 	private enum SpeedType {
 		Flying(true, lang.SpeedTypes.Flying),
 		Walking(false, lang.SpeedTypes.Walking);
-		
+
 		private final boolean fly;
 		private final String name;
 		SpeedType(boolean fly, String name) {
@@ -61,6 +68,7 @@ public class Speed extends Command {
 		}
 		
 		message.send(p);
+		InfoHandler.updatePlayer(p);
 	}
 	
 	private boolean ValidSpeed(BasePlayer p, String speed) {
@@ -92,8 +100,7 @@ public class Speed extends Command {
 			} else {
 				p.sendMessage(lang.Prefix + lang.NoPerm);
 			}
-			
-			
+
 		} else if (args.length == 1) {
 			
 			if (p.hasPermission("minicore.speed")) {
@@ -123,38 +130,47 @@ public class Speed extends Command {
 			
 		} else if (args.length == 3) {
 			if (p.hasPermission("minicore.speed.other")) {
-				
-				BasePlayer target = BasePlayer.from(Bukkit.getPlayer(args[0]));
-				if (target == null || !target.isOnline()) {
-					p.sendMessage(lang.Prefix + lang.InvalidPlayer);
-					return false;
-				}
-				
+
+				if (ValidSpeed(p, args[0])) { return false; }
+				Integer speed = Integer.valueOf(args[0]);
+
 				SpeedType type = SpeedType.getType(args[1]);
 				if (type == null) {
 					p.sendMessage(lang.Prefix + lang.InvalidSpeedType);
 					return false;
 				}
-				
-				if (ValidSpeed(p, args[2])) { return false; }
-				Integer speed = Integer.valueOf(args[2]);
-						
-				
-				StringHandler message = new StringHandler(lang.SpeedChangedOther);
-				message.setPrefix(lang.Prefix);
-				message.replaceAll("{player}", target.getName());
-				message.replaceAll("{type}", type.getName());
-				message.replaceAll("{speed}", speed.toString());
+
+				BasePlayer target = BasePlayer.from(Bukkit.getPlayer(args[2]));
+				if (target == null || !target.isOnline()) {
+					p.sendMessage(lang.Prefix + lang.InvalidPlayer);
+					return false;
+				}
 
 				if (!target.getUniqueId().equals(p.getUniqueId())) {
-					ChangeSpeed(target, type, speed);
-					message.send(p);
+					StringHandler message = new StringHandler(lang.SpeedChangedOther);
+					message.setPrefix(lang.Prefix);
+					message.replaceAll("{player}", target.getName());
+					message.replaceAll("{type}", type.getName());
+					message.replaceAll("{speed}", speed.toString());
+
+					if (!target.getUniqueId().equals(p.getUniqueId())) {
+						ChangeSpeed(target, type, speed);
+						message.send(p);
+					} else {
+						ChangeSpeed(p, type, speed);
+					}
+					Effect.sound(target, Settings.Sound.speed());
+					Effect.sound(p, Settings.Sound.speed());
+					Effect.particle(Settings.Particle.speed(p.getLocation()));
 				} else {
-					ChangeSpeed(p, type, speed);
+					if (p.isFlying()) {
+						ChangeSpeed(p, SpeedType.Flying, speed);
+						return true;
+					}
+					ChangeSpeed(p, SpeedType.Walking, speed);
+					Effect.sound(p, Settings.Sound.speed());
+					Effect.particle(Settings.Particle.speed(p.getLocation()));
 				}
-				Effect.sound(target, Settings.Sound.speed());
-				Effect.sound(p, Settings.Sound.speed());
-				Effect.particle(Settings.Particle.speed(p.getLocation()));
 				return true;
 				
 			} else {
@@ -166,5 +182,28 @@ public class Speed extends Command {
 		
 		return false;
 	}
-	
+
+	public List<String> SpeedValues(){
+		List<String> speeds = new ArrayList<>();
+		for (int i = 1; i <= 10; i++) {
+			speeds.add(String.valueOf(i));
+		}
+		return speeds;
+	}
+	public List<String> SpeedTypeNames(){
+		return Arrays.asList("Flying","Walking");
+	}
+
+	@Override
+	public List<String> tabComplete(CommandSender sender, String alias, String[] args) throws IllegalArgumentException {
+		if (args.length == 1) {
+			return SpeedValues();
+		} else if (args.length == 2) {
+			return SpeedTypeNames();
+		} else if (args.length == 3) {
+			return Utils.playerNameList();
+		}
+		return null;
+	}
+
 }

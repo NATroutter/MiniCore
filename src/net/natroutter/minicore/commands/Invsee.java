@@ -4,6 +4,7 @@ import net.natroutter.minicore.MiniCore;
 import net.natroutter.minicore.utilities.Effect;
 import net.natroutter.minicore.utilities.Lang;
 import net.natroutter.minicore.utilities.Settings;
+import net.natroutter.minicore.utilities.Utils;
 import net.natroutter.natlibs.objects.BasePlayer;
 import net.natroutter.natlibs.utilities.StringHandler;
 import org.bukkit.Bukkit;
@@ -12,6 +13,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.Collections;
+import java.util.List;
 
 public class Invsee extends Command {
 
@@ -49,6 +51,8 @@ public class Invsee extends Command {
 					message.setPrefix(lang.Prefix);
 					message.replaceAll("{player}", target.getName());
 					message.send(p);
+				} else {
+					p.sendMessage(lang.Prefix + lang.CantTargetYourSelf);
 				}
 
 				Effect.sound(p, Settings.Sound.chest());
@@ -63,5 +67,13 @@ public class Invsee extends Command {
 		
 		return false;
 	}
-	
+
+	@Override
+	public List<String> tabComplete(CommandSender sender, String alias, String[] args) throws IllegalArgumentException {
+		if (args.length == 1) {
+			return Utils.playerNameList();
+		}
+		return null;
+	}
+
 }

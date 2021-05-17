@@ -4,6 +4,7 @@ import net.natroutter.minicore.MiniCore;
 import net.natroutter.minicore.utilities.Effect;
 import net.natroutter.minicore.utilities.Lang;
 import net.natroutter.minicore.utilities.Settings;
+import net.natroutter.minicore.utilities.Utils;
 import net.natroutter.natlibs.objects.BaseItem;
 import net.natroutter.natlibs.objects.BasePlayer;
 import net.natroutter.natlibs.utilities.StringHandler;
@@ -11,6 +12,8 @@ import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+
+import java.util.List;
 
 public class Rename extends Command {
 
@@ -54,5 +57,8 @@ public class Rename extends Command {
 		
 		return false;
 	}
-	
+	@Override
+	public List<String> tabComplete(CommandSender sender, String alias, String[] args) throws IllegalArgumentException {
+		return null;
+	}
 }

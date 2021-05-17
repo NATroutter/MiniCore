@@ -1,10 +1,12 @@
-package net.natroutter.minicore.handlers.Database.tables;
+package net.natroutter.minicore.handlers.Database.handlers;
 
 import com.j256.ormlite.dao.Dao;
 import net.natroutter.minicore.MiniCore;
 import net.natroutter.minicore.handlers.Database.Database;
+import net.natroutter.minicore.handlers.Database.tables.PlayerData;
 import net.natroutter.natlibs.objects.BasePlayer;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.command.ConsoleCommandSender;
 
 import java.sql.SQLException;
@@ -44,7 +46,7 @@ public class PlayerDataHandler {
     }
 
     private static PlayerData DefaultPlayerData(UUID uuid) {
-        return null; //TODO Default return object here
+        return new PlayerData(uuid, "Unknown", "Unknown", false, "Unknown", "Unknown", "Unknown", 0.0, 0.0, 0, 0, "Unknown", 0F, 0F, "Unknown", 0L, 0L, "Unknown", false, false, false, false);
     }
 
 

@@ -17,6 +17,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.Collections;
+import java.util.List;
 
 public class Broadcast extends Command {
 
@@ -54,6 +55,11 @@ public class Broadcast extends Command {
             }
         }
         return false;
+    }
+
+    @Override
+    public List<String> tabComplete(CommandSender sender, String alias, String[] args) throws IllegalArgumentException {
+        return null;
     }
 }
 

@@ -1,10 +1,7 @@
 package net.natroutter.minicore.commands;
 
 import net.natroutter.minicore.MiniCore;
-import net.natroutter.minicore.utilities.Config;
-import net.natroutter.minicore.utilities.Effect;
-import net.natroutter.minicore.utilities.Lang;
-import net.natroutter.minicore.utilities.Settings;
+import net.natroutter.minicore.utilities.*;
 import net.natroutter.natlibs.objects.BasePlayer;
 import net.natroutter.natlibs.utilities.StringHandler;
 import org.bukkit.Bukkit;
@@ -13,13 +10,12 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.Collections;
+import java.util.List;
 
 public class Feed extends Command {
 
     public Feed() {
         super("");
-        this.setPermission("minicore.feed");
-        this.setPermissionMessage(lang.NoPerm);
     }
 
     private final Lang lang = MiniCore.getLang();
@@ -34,34 +30,53 @@ public class Feed extends Command {
         BasePlayer p = BasePlayer.from(sender);
 
         if (args.length == 0) {
-
-            p.setFoodLevel(20);
-            p.sendMessage(lang.Prefix + lang.Fed);
-            Effect.sound(p, Settings.Sound.eat());
-            Effect.particle(Settings.Particle.feed(p.getLocation()));
-
-        } else if (args.length == 1) {
-
-            BasePlayer target = BasePlayer.from(Bukkit.getPlayer(args[0]));
-            if (target == null || !target.isOnline()) {
-                p.sendMessage(lang.Prefix + lang.InvalidPlayer);
-                return false;
+            if (p.hasPermission("minicore.feed")) {
+                p.setFoodLevel(20);
+                p.sendMessage(lang.Prefix + lang.Fed);
+                Effect.sound(p, Settings.Sound.eat());
+                Effect.particle(Settings.Particle.feed(p.getLocation()));
+            } else {
+                p.sendMessage(lang.Prefix + lang.NoPerm);
             }
-            target.setFoodLevel(20);
+        } else if (args.length == 1) {
+            if (p.hasPermission("minicore.feed.other")) {
+                BasePlayer target = BasePlayer.from(Bukkit.getPlayer(args[0]));
+                if (target == null || !target.isOnline()) {
+                    p.sendMessage(lang.Prefix + lang.InvalidPlayer);
+                    return false;
+                }
+                if (!target.getUniqueId().equals(p.getUniqueId())) {
+                    target.setFoodLevel(20);
 
-            StringHandler message = new StringHandler(lang.FedOther).setPrefix(lang.Prefix);
-            message.replaceAll("{player}", target.getName());
-            message.send(p);
+                    StringHandler message = new StringHandler(lang.FedOther).setPrefix(lang.Prefix);
+                    message.replaceAll("{player}", target.getName());
+                    message.send(p);
 
-            Effect.sound(p, Settings.Sound.eat());
-            Effect.sound(target, Settings.Sound.eat());
+                    Effect.sound(p, Settings.Sound.eat());
+                    Effect.sound(target, Settings.Sound.eat());
 
-            Effect.particle(Settings.Particle.feed(target.getLocation()));
-
+                    Effect.particle(Settings.Particle.feed(target.getLocation()));
+                } else {
+                    p.setFoodLevel(20);
+                    p.sendMessage(lang.Prefix + lang.Fed);
+                    Effect.sound(p, Settings.Sound.eat());
+                    Effect.particle(Settings.Particle.feed(p.getLocation()));
+                }
+            } else {
+                p.sendMessage(lang.Prefix + lang.NoPerm);
+            }
         } else {
             p.sendMessage(lang.Prefix + lang.ToomanyArgs);
         }
 
         return false;
+    }
+
+    @Override
+    public List<String> tabComplete(CommandSender sender, String alias, String[] args) throws IllegalArgumentException {
+        if (args.length == 1) {
+            return Utils.playerNameList();
+        }
+        return null;
     }
 }

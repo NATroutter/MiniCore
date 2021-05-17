@@ -41,6 +41,9 @@ public class Settings {
         public static ParticleSettings Success(Location loc) {
             return base(org.bukkit.Particle.COMPOSTER, loc);
         }
+        public static ParticleSettings God(Location loc) {
+            return base(org.bukkit.Particle.TOTEM, loc);
+        }
     }
 
     public static class Sound {
@@ -76,6 +79,7 @@ public class Settings {
         }
         public static SoundSettings setspawn() {return new SoundSettings(org.bukkit.Sound.BLOCK_RESPAWN_ANCHOR_SET_SPAWN, 100, 1f); }
         public static SoundSettings speed() {return new SoundSettings(org.bukkit.Sound.ITEM_FIRECHARGE_USE, 100, 1f); }
+        public static SoundSettings god() {return new SoundSettings(org.bukkit.Sound.BLOCK_BEACON_POWER_SELECT, 100, 2f); }
     }
 
 }
