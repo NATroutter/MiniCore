@@ -24,13 +24,13 @@ public class God extends Command {
 
     @Override
     public boolean execute(CommandSender sender, String label, String[] args) {
-        if (!(sender instanceof Player)) {
-            sender.sendMessage(lang.OnlyIngame);
-            return false;
-        }
-        BasePlayer p = BasePlayer.from(sender);
-
         if (args.length == 0) {
+            if (!(sender instanceof Player)) {
+                sender.sendMessage(lang.InvalidArgs);
+                return false;
+            }
+            BasePlayer p = BasePlayer.from(sender);
+
             if (p.hasPermission("minicore.god")) {
                 PlayerData data = PlayerDataHandler.queryForID(p.getUniqueId());
                 if (data == null) {
@@ -48,49 +48,50 @@ public class God extends Command {
                 p.sendMessage(lang.Prefix + lang.NoPerm);
             }
         } else if (args.length == 1) {
-            if (p.hasPermission("minicore.god.other")) {
+            if (sender.hasPermission("minicore.god.other")) {
                 BasePlayer target = BasePlayer.from(Bukkit.getPlayer(args[0]));
                 if (target == null || !target.isOnline()) {
-                    p.sendMessage(lang.Prefix + lang.InvalidPlayer);
+                    sender.sendMessage(lang.Prefix + lang.InvalidPlayer);
                     return false;
                 }
 
-                if (!target.getUniqueId().equals(p.getUniqueId())) {
-                    PlayerData data = PlayerDataHandler.queryForID(target.getUniqueId());
-                    if (data == null) {
-                        return false;
+                PlayerData data = PlayerDataHandler.queryForID(target.getUniqueId());
+                if (data == null) {
+                    return false;
+                }
+                boolean newstate = !data.getGod();
+                data.setGod(newstate);
+
+                StringHandler message = new StringHandler(lang.GodToggledOther).setPrefix(lang.Prefix);
+                message.replaceAll("{status}", newstate ? lang.ToggleStates.enabled : lang.ToggleStates.disabled);
+                message.replaceAll("{player}", target.getName());
+
+                if (sender instanceof Player) {
+                    BasePlayer p = BasePlayer.from(sender);
+                    if (!target.getUniqueId().equals(p.getUniqueId())) {
+                        message.send(p);
+                        PlayerDataHandler.updateForID(data);
+                        Effect.sound(target, Settings.Sound.god());
+                        Effect.sound(p, Settings.Sound.god());
+                        Effect.particle(Settings.Particle.God(target.getLocation()));
+                    } else {
+                        message.send(p);
+                        PlayerDataHandler.updateForID(data);
+                        Effect.sound(p, Settings.Sound.god());
+                        Effect.particle(Settings.Particle.God(target.getLocation()));
                     }
-                    boolean newstate = !data.getGod();
-                    data.setGod(newstate);
-                    StringHandler message = new StringHandler(lang.GodToggledOther).setPrefix(lang.Prefix);
-                    message.replaceAll("{status}", newstate ? lang.ToggleStates.enabled : lang.ToggleStates.disabled);
-                    message.replaceAll("{player}", target.getName());
-                    message.send(p);
+                } else {
+                    sender.sendMessage(message.build());
                     PlayerDataHandler.updateForID(data);
                     Effect.sound(target, Settings.Sound.god());
-                    Effect.sound(p, Settings.Sound.god());
-                    Effect.particle(Settings.Particle.God(p.getLocation()));
-
-                } else {
-                    PlayerData data = PlayerDataHandler.queryForID(p.getUniqueId());
-                    if (data == null) {
-                        return false;
-                    }
-                    boolean newstate = !data.getGod();
-                    data.setGod(newstate);
-                    StringHandler message = new StringHandler(lang.GodToggled).setPrefix(lang.Prefix);
-                    message.replaceAll("{status}", newstate ? lang.ToggleStates.enabled : lang.ToggleStates.disabled);
-                    message.send(p);
-                    PlayerDataHandler.updateForID(data);
-                    Effect.sound(p, Settings.Sound.god());
-                    Effect.particle(Settings.Particle.God(p.getLocation()));
+                    Effect.particle(Settings.Particle.God(target.getLocation()));
                 }
             } else {
-                p.sendMessage(lang.Prefix+lang.NoPerm);
+                sender.sendMessage(lang.Prefix+lang.NoPerm);
             }
 
         } else {
-            p.sendMessage(lang.Prefix + lang.ToomanyArgs);
+            sender.sendMessage(lang.Prefix + lang.ToomanyArgs);
         }
         return false;
     }

@@ -30,9 +30,8 @@ public class Invsee extends Command {
 			sender.sendMessage(lang.OnlyIngame);
 			return false;
 		}
-		
 		BasePlayer p = BasePlayer.from(sender);
-		
+
 		if (args.length == 0) {
 			p.sendMessage(lang.Prefix + lang.InvalidPlayer);
 			

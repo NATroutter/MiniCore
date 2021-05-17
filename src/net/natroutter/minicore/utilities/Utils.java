@@ -3,6 +3,7 @@ package net.natroutter.minicore.utilities;
 import net.natroutter.minicore.MiniCore;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
+import org.bukkit.World;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginDescriptionFile;
@@ -18,6 +19,13 @@ public class Utils {
         ArrayList<String> list = new ArrayList<>();
         for (Player p : Bukkit.getOnlinePlayers()) {
             list.add(p.getName());
+        }
+        return list;
+    }
+    public static ArrayList<String> worldNameList() {
+        ArrayList<String> list = new ArrayList<>();
+        for (World w : Bukkit.getWorlds()) {
+            list.add(w.getName());
         }
         return list;
     }

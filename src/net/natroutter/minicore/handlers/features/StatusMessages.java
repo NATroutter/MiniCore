@@ -1,6 +1,8 @@
 package net.natroutter.minicore.handlers.features;
 
 import net.natroutter.minicore.MiniCore;
+import net.natroutter.minicore.handlers.Database.handlers.PlayerDataHandler;
+import net.natroutter.minicore.handlers.Database.tables.PlayerData;
 import net.natroutter.minicore.utilities.Config;
 import net.natroutter.minicore.utilities.Lang;
 import net.natroutter.natlibs.handlers.Database.YamlDatabase;
@@ -23,6 +25,7 @@ public class StatusMessages implements Listener {
     public void onJoin(PlayerJoinEvent e) {
         BasePlayer p = BasePlayer.from(e.getPlayer());
 
+        //Force teleport palyers to psawn
         if (config.ForceSpawnOnJoin) {
             Location spawn = database.getLocation("General", "SpawnLoc");
             if (spawn != null) {
@@ -32,6 +35,17 @@ public class StatusMessages implements Listener {
             }
         }
 
+        //Disable god mode
+        if (config.DisableGodOnJoin) {
+            PlayerData data = PlayerDataHandler.queryForID(p.getUniqueId());
+            if (data != null) {
+                data.setGod(false);
+                PlayerDataHandler.updateForID(data);
+            }
+        }
+
+
+        //join messages
         if (config.DisableJoinMessage) {
             e.setJoinMessage(null);
         } else {

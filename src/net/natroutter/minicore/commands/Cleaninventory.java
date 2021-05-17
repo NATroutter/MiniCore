@@ -24,13 +24,14 @@ public class Cleaninventory extends Command {
 
     @Override
     public boolean execute(CommandSender sender, String label, String[] args) {
-        if (!(sender instanceof Player)) {
-            sender.sendMessage(lang.OnlyIngame);
-            return false;
-        }
-        BasePlayer p = BasePlayer.from(sender);
 
         if (args.length == 0) {
+            if (!(sender instanceof Player)) {
+                sender.sendMessage(lang.InvalidArgs);
+                return false;
+            }
+            BasePlayer p = BasePlayer.from(sender);
+
             if (p.hasPermission("minicore.cleaninventory")) {
                 p.getInventory().clear();
                 p.sendMessage(lang.Prefix + lang.inventoryCleaned);
@@ -39,30 +40,42 @@ public class Cleaninventory extends Command {
                 p.sendMessage(lang.Prefix + lang.NoPerm);
             }
         } else if (args.length == 1) {
-            if (p.hasPermission("minicore.cleaninventory.other")) {
+            if (sender.hasPermission("minicore.cleaninventory.other")) {
                 BasePlayer target = BasePlayer.from(Bukkit.getPlayer(args[0]));
                 if (target == null || !target.isOnline()) {
-                    p.sendMessage(lang.Prefix + lang.InvalidPlayer);
+                    sender.sendMessage(lang.Prefix + lang.InvalidPlayer);
                     return false;
                 }
-                if (!target.getUniqueId().equals(p.getUniqueId())) {
+
+                if (sender instanceof Player) {
+                    BasePlayer p = BasePlayer.from(sender);
+                    if (!target.getUniqueId().equals(p.getUniqueId())) {
+                        target.getInventory().clear();
+
+                        StringHandler message = new StringHandler(lang.inventoryCleanedOther).setPrefix(lang.Prefix);
+                        message.replaceAll("{player}", target.getName());
+                        message.send(p);
+                        Effect.sound(target, Settings.Sound.modified());
+                        Effect.sound(p, Settings.Sound.modified());
+                    } else {
+                        p.getInventory().clear();
+                        p.sendMessage(lang.Prefix + lang.inventoryCleaned);
+                        Effect.sound(p, Settings.Sound.modified());
+                    }
+                } else {
                     target.getInventory().clear();
 
                     StringHandler message = new StringHandler(lang.inventoryCleanedOther).setPrefix(lang.Prefix);
                     message.replaceAll("{player}", target.getName());
-                    message.send(p);
+                    sender.sendMessage(message.build());
                     Effect.sound(target, Settings.Sound.modified());
-                    Effect.sound(p, Settings.Sound.modified());
-                } else {
-                    p.getInventory().clear();
-                    p.sendMessage(lang.Prefix + lang.inventoryCleaned);
-                    Effect.sound(p, Settings.Sound.modified());
                 }
+
             } else {
-                p.sendMessage(lang.Prefix+lang.NoPerm);
+                sender.sendMessage(lang.Prefix+lang.NoPerm);
             }
         } else {
-            p.sendMessage(lang.Prefix + lang.ToomanyArgs);
+            sender.sendMessage(lang.Prefix + lang.ToomanyArgs);
         }
         return false;
     }

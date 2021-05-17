@@ -31,14 +31,13 @@ public class Gamemode extends Command {
 	
 	@Override
 	public boolean execute(CommandSender sender, String label, String[] args) {
-		if (!(sender instanceof Player)) {
-			sender.sendMessage(lang.OnlyIngame);
-			return false;
-		}
-		
-		BasePlayer p = BasePlayer.from(sender);
-		
 		if (args.length == 1) {
+			if (!(sender instanceof Player)) {
+				sender.sendMessage(lang.InvalidArgs);
+				return false;
+			}
+			BasePlayer p = BasePlayer.from(sender);
+
 			if (p.hasPermission("minicore.gamemode")) {
 				
 				GameMode gm = Utils.ValidateGamemode(args[0]);
@@ -61,57 +60,62 @@ public class Gamemode extends Command {
 				p.sendMessage(lang.Prefix + lang.NoPerm);
 			}
 		} else if (args.length == 2) {
-			if (p.hasPermission("minicore.gamemode.other")) {
+			if (sender.hasPermission("minicore.gamemode.other")) {
 				
 				BasePlayer target = BasePlayer.from(Bukkit.getPlayer(args[1]));
 				if (target == null || !target.isOnline()) {
-					p.sendMessage(lang.Prefix + lang.InvalidPlayer);
+					sender.sendMessage(lang.Prefix + lang.InvalidPlayer);
 					return false;
 				}
 			
 				GameMode gm = Utils.ValidateGamemode(args[0]);
 				if (gm != null) {
 
-					if (!target.getUniqueId().equals(p.getUniqueId())) {
-						StringHandler message = new StringHandler(lang.GamemodeChanged);
-						message.setPrefix(lang.Prefix);
-						message.replace("{gamemode}", Utils.getGamemodeName(gm));
+					StringHandler message = new StringHandler(lang.GamemodeChanged);
+					message.setPrefix(lang.Prefix);
+					message.replace("{gamemode}", Utils.getGamemodeName(gm));
 
-						StringHandler message1 = new StringHandler(lang.GamemodeChangedOther);
-						message1.setPrefix(lang.Prefix);
-						message1.replace("{player}", target.getName());
-						message1.replace("{gamemode}", Utils.getGamemodeName(gm));
+					StringHandler message1 = new StringHandler(lang.GamemodeChangedOther);
+					message1.setPrefix(lang.Prefix);
+					message1.replace("{player}", target.getName());
+					message1.replace("{gamemode}", Utils.getGamemodeName(gm));
 
-						Effect.sound(p, Settings.Sound.gamemode());
+					if (sender instanceof Player) {
+						BasePlayer p = BasePlayer.from(sender);
+						if (!target.getUniqueId().equals(p.getUniqueId())) {
+							Effect.sound(p, Settings.Sound.gamemode());
+							Effect.sound(target, Settings.Sound.gamemode());
+
+							Effect.particle(Settings.Particle.gamemode(target.getLocation()));
+
+							target.setGameMode(gm);
+							message.send(target);
+							message1.send(p);
+						} else {
+							p.setGameMode(gm);
+							message.send(p);
+							Effect.sound(p, Settings.Sound.gamemode());
+							Effect.particle(Settings.Particle.gamemode(p.getLocation()));
+						}
+					} else {
 						Effect.sound(target, Settings.Sound.gamemode());
 
 						Effect.particle(Settings.Particle.gamemode(target.getLocation()));
 
 						target.setGameMode(gm);
 						message.send(target);
-						if (!target.getUniqueId().equals(p.getUniqueId())) {
-							message1.send(p);
-						}
-					} else {
-						StringHandler message = new StringHandler(lang.GamemodeChanged);
-						message.setPrefix(lang.Prefix);
-						message.replace("{gamemode}", Utils.getGamemodeName(gm));
-
-						p.setGameMode(gm);
-						message.send(p);
-						Effect.sound(p, Settings.Sound.gamemode());
-						Effect.particle(Settings.Particle.gamemode(p.getLocation()));
+						sender.sendMessage(message1.build());
 					}
 
 				} else {
-					p.sendMessage(lang.Prefix + lang.InvalidGamemode);
+					sender.sendMessage(lang.Prefix + lang.InvalidGamemode);
 				}
 				
 			} else {
-				p.sendMessage(lang.Prefix + lang.NoPerm);
+				sender.sendMessage(lang.Prefix + lang.NoPerm);
 			}
 		} else {
-			p.sendMessage(lang.Prefix + lang.ToomanyArgs);
+			sender.sendMessage(lang.Prefix + lang.ToomanyArgs);
 		}
 		
 		return false;

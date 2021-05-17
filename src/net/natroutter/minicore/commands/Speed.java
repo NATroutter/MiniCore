@@ -71,16 +71,16 @@ public class Speed extends Command {
 		InfoHandler.updatePlayer(p);
 	}
 	
-	private boolean ValidSpeed(BasePlayer p, String speed) {
+	private boolean ValidSpeed(CommandSender sender, String speed) {
 		try {
 			int ParsedSpeed = Integer.parseInt(speed);
 			if (utils.isBetween(ParsedSpeed, 1, 10)) {
 				return false;
 			} else {
-				p.sendMessage(lang.Prefix + lang.SpeedOutOfRange);
+				sender.sendMessage(lang.Prefix + lang.SpeedOutOfRange);
 			}
 		} catch(Exception e) {
-			p.sendMessage(lang.Prefix + lang.InvalidSpeed);
+			sender.sendMessage(lang.Prefix + lang.InvalidSpeed);
 		}
 		return true;
 	}
@@ -88,21 +88,20 @@ public class Speed extends Command {
 	
 	@Override
 	public boolean execute(CommandSender sender, String label, String[] args) {
-		if (!(sender instanceof Player)) {
-			sender.sendMessage(lang.OnlyIngame);
-			return false;
-		}
-		
-		BasePlayer p = BasePlayer.from(sender);
 		if (args.length == 0) {
-			if (p.hasPermission("minicore.speed")) {
-				p.sendMessage(lang.Prefix + lang.SpeedNotDefined);
+			if (sender.hasPermission("minicore.speed")) {
+				sender.sendMessage(lang.Prefix + lang.SpeedNotDefined);
 			} else {
-				p.sendMessage(lang.Prefix + lang.NoPerm);
+				sender.sendMessage(lang.Prefix + lang.NoPerm);
 			}
 
 		} else if (args.length == 1) {
-			
+			if (!(sender instanceof Player)) {
+				sender.sendMessage(lang.InvalidArgs);
+				return false;
+			}
+			BasePlayer p = BasePlayer.from(sender);
+
 			if (p.hasPermission("minicore.speed")) {
 				
 				if (ValidSpeed(p, args[0])) { return false; }
@@ -122,62 +121,67 @@ public class Speed extends Command {
 			}
 			
 		} else if (args.length == 2) {
-			if (p.hasPermission("minicore.speed.other")) {
-				p.sendMessage(lang.Prefix + lang.InvalidArgs);
+			if (sender.hasPermission("minicore.speed.other")) {
+				sender.sendMessage(lang.Prefix + lang.InvalidArgs);
 			} else {
-				p.sendMessage(lang.Prefix + lang.NoPerm);
+				sender.sendMessage(lang.Prefix + lang.NoPerm);
 			}
 			
 		} else if (args.length == 3) {
-			if (p.hasPermission("minicore.speed.other")) {
+			if (sender.hasPermission("minicore.speed.other")) {
 
-				if (ValidSpeed(p, args[0])) { return false; }
+				if (ValidSpeed(sender, args[0])) { return false; }
 				Integer speed = Integer.valueOf(args[0]);
 
 				SpeedType type = SpeedType.getType(args[1]);
 				if (type == null) {
-					p.sendMessage(lang.Prefix + lang.InvalidSpeedType);
+					sender.sendMessage(lang.Prefix + lang.InvalidSpeedType);
 					return false;
 				}
 
 				BasePlayer target = BasePlayer.from(Bukkit.getPlayer(args[2]));
 				if (target == null || !target.isOnline()) {
-					p.sendMessage(lang.Prefix + lang.InvalidPlayer);
+					sender.sendMessage(lang.Prefix + lang.InvalidPlayer);
 					return false;
 				}
 
-				if (!target.getUniqueId().equals(p.getUniqueId())) {
-					StringHandler message = new StringHandler(lang.SpeedChangedOther);
-					message.setPrefix(lang.Prefix);
-					message.replaceAll("{player}", target.getName());
-					message.replaceAll("{type}", type.getName());
-					message.replaceAll("{speed}", speed.toString());
+				StringHandler message = new StringHandler(lang.SpeedChangedOther);
+				message.setPrefix(lang.Prefix);
+				message.replaceAll("{player}", target.getName());
+				message.replaceAll("{type}", type.getName());
+				message.replaceAll("{speed}", speed.toString());
 
+				if (sender instanceof Player) {
+					BasePlayer p = BasePlayer.from(sender);
 					if (!target.getUniqueId().equals(p.getUniqueId())) {
+
 						ChangeSpeed(target, type, speed);
 						message.send(p);
+
+						Effect.sound(target, Settings.Sound.speed());
+						Effect.sound(p, Settings.Sound.speed());
+						Effect.particle(Settings.Particle.speed(target.getLocation()));
 					} else {
-						ChangeSpeed(p, type, speed);
+						if (p.isFlying()) {
+							ChangeSpeed(p, SpeedType.Flying, speed);
+							return true;
+						}
+						ChangeSpeed(p, SpeedType.Walking, speed);
+						Effect.sound(p, Settings.Sound.speed());
+						Effect.particle(Settings.Particle.speed(p.getLocation()));
 					}
-					Effect.sound(target, Settings.Sound.speed());
-					Effect.sound(p, Settings.Sound.speed());
-					Effect.particle(Settings.Particle.speed(p.getLocation()));
 				} else {
-					if (p.isFlying()) {
-						ChangeSpeed(p, SpeedType.Flying, speed);
-						return true;
-					}
-					ChangeSpeed(p, SpeedType.Walking, speed);
-					Effect.sound(p, Settings.Sound.speed());
-					Effect.particle(Settings.Particle.speed(p.getLocation()));
+					ChangeSpeed(target, type, speed);
+					sender.sendMessage(message.build());
+					Effect.sound(target, Settings.Sound.speed());
+					Effect.particle(Settings.Particle.speed(target.getLocation()));
 				}
 				return true;
-				
 			} else {
-				p.sendMessage(lang.Prefix + lang.NoPerm);
+				sender.sendMessage(lang.Prefix + lang.NoPerm);
 			}
 		} else {
-			p.sendMessage(lang.Prefix + lang.ToomanyArgs);
+			sender.sendMessage(lang.Prefix + lang.ToomanyArgs);
 		}
 		
 		return false;

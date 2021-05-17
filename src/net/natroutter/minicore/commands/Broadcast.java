@@ -32,18 +32,13 @@ public class Broadcast extends Command {
 
     @Override
     public boolean execute(CommandSender sender, String label, String[] args) {
-        if (!(sender instanceof Player)) {
-            sender.sendMessage(lang.OnlyIngame);
-            return false;
-        }
-        BasePlayer p = BasePlayer.from(sender);
 
         if (args.length == 0) {
-            p.sendMessage(lang.Prefix + lang.InvalidBroadcastMessage);
+            sender.sendMessage(lang.Prefix + lang.InvalidBroadcastMessage);
 
         } else {
             StringHandler message = new StringHandler(args, ' ');
-            if (p.hasPermission("minicore.broadcast.colors")) {
+            if (sender.hasPermission("minicore.broadcast.colors")) {
                 message.replaceColors();
             }
 
@@ -51,7 +46,7 @@ public class Broadcast extends Command {
             broadcast.replaceAll("{message}", message.build());
             for (BasePlayer onlineP : BasePlayer.getOnlinePlayers()) {
                 broadcast.send(onlineP);
-                Effect.sound(p, Settings.Sound.broadcast());
+                Effect.sound(onlineP, Settings.Sound.broadcast());
             }
         }
         return false;

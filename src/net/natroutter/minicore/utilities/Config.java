@@ -2,7 +2,7 @@ package net.natroutter.minicore.utilities;
 
 public class Config {
 
-    public String ChatFormat = "{prefix}§7{displayname}{suffix}&8: §f{message}";
+    public String ChatFormat = "{prefix}§7{displayname}{suffix}§8: §f{message}";
     public String BroadcastFormat = "§4§lBroadcast §8§l» §f{message}";
     public String DateFormat = "MM.dd.yyyy hh:mm";
 
@@ -15,6 +15,7 @@ public class Config {
     public Boolean ShowJoinMessageIfNewPlayer = true;
     public Boolean AllowBedSpawn = true;
     public Boolean ForceSpawnOnJoin = true;
+    public Boolean DisableGodOnJoin = true;
 
 
     public EnabledFeatures EnabledFeatures = new EnabledFeatures();

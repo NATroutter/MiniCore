@@ -46,7 +46,7 @@ public class Tphere extends Command {
 
                 target.teleport(p.getLocation());
 
-                Effect.particle(Settings.Particle.teleportEnd(target.getLocation()));
+                Effect.particle(Settings.Particle.teleportEnd(p.getLocation()));
                 Effect.sound(p, Settings.Sound.teleported());
                 Effect.sound(target, Settings.Sound.teleported());
 

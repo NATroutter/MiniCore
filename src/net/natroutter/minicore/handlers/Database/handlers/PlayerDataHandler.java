@@ -18,6 +18,7 @@ public class PlayerDataHandler {
     private final static ConsoleCommandSender console = Bukkit.getServer().getConsoleSender();
 
     public static PlayerData queryForID(UUID uuid) {
+        if (uuid == null) {return null;}
         try {
             PlayerData data = database.getPlayerData().queryForId(uuid);
             if (data == null) {

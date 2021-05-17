@@ -29,24 +29,25 @@ public class Cleanchat extends Command {
 
     @Override
     public boolean execute(CommandSender sender, String label, String[] args) {
-        if (!(sender instanceof Player)) {
-            sender.sendMessage(lang.OnlyIngame);
-            return false;
-        }
-        BasePlayer p = BasePlayer.from(sender);
 
         if (args.length == 0) {
             for (int i = 0; i < 255; i++) {
                 Bukkit.broadcastMessage(" ");
             }
             StringHandler message = new StringHandler(lang.ChatCleaned).setPrefix(lang.Prefix);
-            message.replaceAll("{player}", p.getName());
+
+            if (sender instanceof Player) {
+                message.replaceAll("{player}", BasePlayer.from(sender).getName());
+            } else {
+                message.replaceAll("{player}", lang.ConsoleName);
+            }
+
             for (BasePlayer onlineP : BasePlayer.getOnlinePlayers()) {
                 message.send(onlineP);
-                Effect.sound(p, Settings.Sound.modified());
+                Effect.sound(onlineP, Settings.Sound.modified());
             }
         } else {
-            p.sendMessage(lang.Prefix + lang.ToomanyArgs);
+            sender.sendMessage(lang.Prefix + lang.ToomanyArgs);
         }
 
         return false;

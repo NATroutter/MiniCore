@@ -31,6 +31,7 @@ public class Lang {
     public String SpawnSet = "§7Spawn has been set to your location!";
     public String SpawnNotset = "§7Spawn has not been set!";
     public String TeleportedToSpawn = "§7You have been teleported to spawn!";
+    public String TeleportedToSpawnOther = "§c{player}§7 teleported to spawn!";
     public String ItemCleaned = "§7Item has been cleaned";
     public String ItemAlreadyClean = "§7Item is already clean!";
     public String LoreAdded = "§7Lore added to item!";
@@ -54,11 +55,14 @@ public class Lang {
     public String Joined = "§c{player}§7 joined the server";
     public String Quit = "§c{player}§7 left the server";
     public String FirstTimeWelcome = "§c{player}§7 is a new player!";
+    public String ConsoleName = "Console";
+    public String WorldNeeded = "§7You need to specify world!";
+    public String InvalidWorld = "§7Invalid World!";
 
     public String LocationFormat = "§8(§c{world}§7, §c{x}§7, §c{y}§7, §c{z}§7, §c{pitch}§7, §c{yaw}§8)";
 
     public List<String> ShowFormat = new ArrayList<>() {{
-        add("§c§l-------+ §4§lMiniCore §c§l+-------");
+        add("§8§l----------+ §4§lMiniCore §8§l+----------");
         add("§7UUID§8: §c{uuid}");
         add("§7Name§8: §c{name}");
         add("§7DisplayName§8: §c{displayname}");
@@ -80,17 +84,17 @@ public class Lang {
         add("§7Allowed Fly§8: §c{allowfly}");
         add("§7Inside Vehicle§8: §c{invehicle}");
         add("§7God§8: §c{god}");
-        add("§c§l-------+ §4§lMiniCore §c§l+-------");
+        add("§8§l----------+ §4§lMiniCore §8§l+----------");
     }};
 
     public ListFormat ListFormat = new ListFormat();
     public static class ListFormat {
         public List<String> Format = new ArrayList<>() {{
-            add("§c§l-------+ §4§lMiniCore §c§l+-------");
+            add("§8§l----------+ §4§lMiniCore §8§l+----------");
             add("{entries}");
             add("");
             add("§7Total: §c{online}§8/§c{max}");
-            add("§c§l-------+ §4§lMiniCore §c§l+-------");
+            add("§8§l----------+ §4§lMiniCore §8§l+----------");
         }};
         public String Entry = "§c{displayname}§7";
         public String Separator = ", ";

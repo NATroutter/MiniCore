@@ -36,7 +36,6 @@ public class Tpall extends Command {
                 onlineP.teleport(p);
                 Effect.sound(onlineP, Settings.Sound.teleported());
             }
-            Effect.sound(p, Settings.Sound.teleported());
             p.sendMessage(lang.Prefix + lang.AllPlayersTeleported);
         } else {
             p.sendMessage(lang.Prefix + lang.ToomanyArgs);

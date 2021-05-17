@@ -1,5 +1,6 @@
 package net.natroutter.minicore.commands;
 
+import com.j256.ormlite.misc.IOUtils;
 import com.j256.ormlite.stmt.query.In;
 import jdk.jshell.execution.Util;
 import me.clip.placeholderapi.PlaceholderAPI;
@@ -10,20 +11,30 @@ import net.natroutter.minicore.handlers.Hooks;
 import net.natroutter.minicore.handlers.features.InfoHandler;
 import net.natroutter.minicore.utilities.*;
 import net.natroutter.natlibs.objects.BasePlayer;
+import net.natroutter.natlibs.objects.MojangApiInfo;
+import net.natroutter.natlibs.utilities.MojangAPI;
 import net.natroutter.natlibs.utilities.StringHandler;
 import net.natroutter.natlibs.utilities.Utilities;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.json.simple.JSONObject;
+import org.json.simple.JSONValue;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 public class Show extends Command {
 
@@ -31,6 +42,7 @@ public class Show extends Command {
     private Hooks hooks = MiniCore.getHooks();
     private Config config = MiniCore.getConf();
     private Utilities utils = MiniCore.getUtilities();
+    private MojangAPI mojangAPI = MiniCore.getMojangAPI();
 
     public Show() {
         super("");
@@ -75,26 +87,23 @@ public class Show extends Command {
 
     @Override
     public boolean execute(CommandSender sender, String label, String[] args) {
-        if (!(sender instanceof Player)) {
-            sender.sendMessage(lang.OnlyIngame);
-            return false;
-        }
-
-        BasePlayer p = BasePlayer.from(sender);
-
         if (args.length == 0) {
-            p.sendMessage(lang.Prefix + lang.InvalidPlayer);
+            sender.sendMessage(lang.Prefix + lang.InvalidPlayer);
 
         } else if (args.length == 1) {
-            if (p.hasPermission("minicore.show")) {
+            if (sender.hasPermission("minicore.show")) {
 
-                BasePlayer target = BasePlayer.from(Bukkit.getPlayer(args[0])); //TODO add offlineplayer support
-                if (target == null || !target.isOnline()) {
-                    p.sendMessage(lang.Prefix + lang.InvalidPlayer);
+                PlayerData data;
+                BasePlayer target = BasePlayer.from(Bukkit.getPlayer(args[0]));
+                if (target != null && target.isOnline()) {
+                    data = InfoHandler.updatePlayer(target);
+                } else {
+                    data = PlayerDataHandler.queryForID(mojangAPI.getUUID(args[0]));
+                }
+                if (data==null) {
+                    sender.sendMessage(lang.Prefix + lang.InvalidPlayer);
                     return false;
                 }
-                PlayerData data = InfoHandler.updatePlayer(target);
-                if (data==null) {return false;}
 
                 for (String line : lang.ShowFormat) {
                     StringHandler show = new StringHandler(line);
@@ -123,15 +132,17 @@ public class Show extends Command {
                     show.replaceAll("{god}", printBool(data.getGod()));
 
                     if (hooks.PlaceHolderApi.isHooked()) {
-                        show = StringHandler.from(show, PlaceholderAPI.setPlaceholders(p, show.build()));
+                        if (target != null && target.isOnline()) {
+                            show = StringHandler.from(show, PlaceholderAPI.setPlaceholders(target, show.build()));
+                        }
                     }
-                    show.send(p);
+                    sender.sendMessage(show.build());
                 }
             } else {
-                p.sendMessage(lang.Prefix + lang.NoPerm);
+                sender.sendMessage(lang.Prefix + lang.NoPerm);
             }
         } else {
-            p.sendMessage(lang.Prefix + lang.ToomanyArgs);
+            sender.sendMessage(lang.Prefix + lang.ToomanyArgs);
         }
         return false;
     }

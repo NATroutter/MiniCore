@@ -31,12 +31,6 @@ public class List extends Command {
 
     @Override
     public boolean execute(CommandSender sender, String label, String[] args) {
-        if (!(sender instanceof Player)) {
-            sender.sendMessage(lang.OnlyIngame);
-            return false;
-        }
-        BasePlayer p = BasePlayer.from(sender);
-
         if (args.length == 0) {
 
             ArrayList<String> playerEntries = new ArrayList<>();
@@ -67,11 +61,14 @@ public class List extends Command {
                 msgLine.replaceAll("{entries}", entries);
                 msgLine.replaceAll("{online}", Bukkit.getOnlinePlayers().size());
                 msgLine.replaceAll("{max}", Bukkit.getServer().getMaxPlayers());
-                msgLine.send(p);
+                sender.sendMessage(msgLine.build());
             }
-            Effect.sound(p, Settings.Sound.modified());
+            if (sender instanceof Player) {
+                BasePlayer p = BasePlayer.from(sender);
+                Effect.sound(p, Settings.Sound.modified());
+            }
         } else {
-            p.sendMessage(lang.Prefix + lang.ToomanyArgs);
+            sender.sendMessage(lang.Prefix + lang.ToomanyArgs);
         }
         return false;
     }

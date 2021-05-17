@@ -8,6 +8,7 @@ import net.natroutter.minicore.utilities.Utils;
 import net.natroutter.natlibs.handlers.Database.YamlDatabase;
 import net.natroutter.natlibs.objects.BasePlayer;
 import net.natroutter.natlibs.objects.ParticleSettings;
+import net.natroutter.natlibs.utilities.StringHandler;
 import net.natroutter.natlibs.utilities.Utilities;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -30,14 +31,12 @@ public class Spawn extends Command {
 
 	@Override
 	public boolean execute(CommandSender sender, String label, String[] args) {
-		if (!(sender instanceof Player)) {
-			sender.sendMessage(lang.OnlyIngame);
-			return false;
-		}
-		
-		BasePlayer p = BasePlayer.from(sender);
 		if (args.length == 0) {
-
+			if (!(sender instanceof Player)) {
+				sender.sendMessage(lang.InvalidArgs);
+				return false;
+			}
+			BasePlayer p = BasePlayer.from(sender);
 			Location loc = database.getLocation("General", "SpawnLoc");
 
 			if (loc != null) {
@@ -46,7 +45,6 @@ public class Spawn extends Command {
 				Effect.particle(Settings.Particle.teleportEnd(loc));
 				Effect.sound(p, Settings.Sound.teleported());
 
-				p.playSound(p.getLocation(), Sound.BLOCK_RESPAWN_ANCHOR_CHARGE, 1, 50);
 				p.sendMessage(lang.Prefix + lang.TeleportedToSpawn);
 			} else {
 				p.sendMessage(lang.Prefix + lang.SpawnNotset);
@@ -55,26 +53,38 @@ public class Spawn extends Command {
 		} else if (args.length == 1) {
 			BasePlayer target = BasePlayer.from(Bukkit.getPlayer(args[0]));
 			if (target == null || !target.isOnline()) {
-				p.sendMessage(lang.Prefix + lang.InvalidPlayer);
+				sender.sendMessage(lang.Prefix + lang.InvalidPlayer);
 				return false;
 			}
 
 			Location loc = database.getLocation("General", "SpawnLoc");
-
 			if (loc != null) {
-				Effect.particle(Settings.Particle.teleportStart(target.getLocation()));
-				target.teleport(loc);
-				Effect.particle(Settings.Particle.teleportEnd(loc));
-				Effect.sound(p, Settings.Sound.teleported());
-				Effect.sound(target, Settings.Sound.teleported());
 
-				p.playSound(p.getLocation(), Sound.BLOCK_RESPAWN_ANCHOR_CHARGE, 1, 50);
-				p.sendMessage(lang.Prefix + lang.TeleportedToSpawn);
+				if (sender instanceof Player) {
+					BasePlayer p = BasePlayer.from(sender);
+					Effect.sound(p, Settings.Sound.teleported());
+
+					if (!target.getUniqueId().equals(p.getUniqueId())) {
+						Effect.particle(Settings.Particle.teleportStart(target.getLocation()));
+						target.teleport(loc);
+						Effect.sound(target, Settings.Sound.teleported());
+						StringHandler message = new StringHandler(lang.TeleportedToSpawnOther).setPrefix(lang.Prefix);
+						message.replaceAll("{player}", target.getName());
+						message.send(p);
+					} else {
+						Effect.particle(Settings.Particle.teleportStart(p.getLocation()));
+						p.sendMessage(lang.Prefix + lang.TeleportedToSpawn);
+						p.teleport(loc);
+					}
+
+					Effect.particle(Settings.Particle.teleportEnd(loc));
+				}
+
 			} else {
-				p.sendMessage(lang.Prefix + lang.SpawnNotset);
+				sender.sendMessage(lang.Prefix + lang.SpawnNotset);
 			}
 		} else {
-			p.sendMessage(lang.Prefix + lang.ToomanyArgs);
+			sender.sendMessage(lang.Prefix + lang.ToomanyArgs);
 		}
 		return false;
 	}

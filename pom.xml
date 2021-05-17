@@ -6,7 +6,7 @@
 
 <groupId>net.natroutter.minicore</groupId>
 <artifactId>MiniCore</artifactId>
-<version>1.0.0</version>
+<version>1.0.1</version>
 <packaging>jar</packaging>
 
 <name>MiniCore</name>
@@ -92,7 +92,7 @@
     <dependency>
         <groupId>net.natroutter</groupId>
         <artifactId>NATLibs</artifactId>
-        <version>1.1.42</version>
+        <version>1.1.45</version>
     </dependency>
     <dependency>
         <groupId>org.spigotmc</groupId>
