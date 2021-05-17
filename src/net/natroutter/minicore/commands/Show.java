@@ -124,7 +124,7 @@ public class Show extends Command {
                     show.replaceAll("{walkspeed}", data.getWalkspeed());
                     show.replaceAll("{world}", data.getWorld());
                     show.replaceAll("{firstplayed}", printDate(data.getFirstplayed()));
-                    show.replaceAll("{lastplayed}", printDate(data.getFirstplayed()));
+                    show.replaceAll("{lastplayed}", printDate(data.getLastplayed()));
                     show.replaceAll("{bedlocation}", printLoc(data.getBedlocation()));
                     show.replaceAll("{flying}", printBool(data.getFlying()));
                     show.replaceAll("{allowfly}", printBool(data.getAllowedfly()));

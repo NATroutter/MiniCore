@@ -95,7 +95,7 @@ public class InfoHandler implements Listener {
                 Player onlineP = p.getPlayer();
                 if (onlineP != null) {
                     if (onlineP.getAddress() != null) {
-                        data.setIp(onlineP.getAddress().getAddress().toString());
+                        data.setIp(onlineP.getAddress().getAddress().getHostAddress());
                     }
                     data.setDisplayname(onlineP.getDisplayName());
                     data.setLastloc(utils.serializeLocation(onlineP.getLocation(), sep));
