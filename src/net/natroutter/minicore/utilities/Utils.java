@@ -61,8 +61,8 @@ public class Utils {
         Console.sendMessage("§5     | |\\/| | | ' \\| | (__/ _ \\ '_/ -_)           ");
         Console.sendMessage("§5     |_|  |_|_|_||_|_|\\___\\___/_| \\___|           ");
         Console.sendMessage("§5                                                  ");
-        Console.sendMessage("§5Loading version §d"+pdf.getVersion()+" §5on §d" + Bukkit.getServer().getName() + " §5- §d" + Bukkit.getServer().getVersion());
-        Console.sendMessage("§d       Minicore created by §dNATroutter             ");
+        Console.sendMessage("§5            Loading version §d"+pdf.getVersion());
+        Console.sendMessage("§5     Minicore made with §d❤ §5by §dNATroutter         ");
         Console.sendMessage("§5	                                                 ");
     }
 }
