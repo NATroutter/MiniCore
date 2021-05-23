@@ -5,7 +5,6 @@ import net.natroutter.minicore.utilities.Effect;
 import net.natroutter.minicore.utilities.Lang;
 import net.natroutter.minicore.utilities.Settings;
 import net.natroutter.natlibs.objects.BaseItem;
-import net.natroutter.natlibs.objects.BasePlayer;
 import net.natroutter.natlibs.utilities.StringHandler;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
@@ -32,7 +31,7 @@ public class Addlore extends Command {
             return false;
         }
 
-        BasePlayer p = BasePlayer.from(sender);
+        Player p = (Player)sender;
 
         if (args.length == 0) {
             p.sendMessage(lang.Prefix + lang.InvalidArgs);

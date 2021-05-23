@@ -5,7 +5,7 @@ import net.natroutter.minicore.utilities.Effect;
 import net.natroutter.minicore.utilities.Lang;
 import net.natroutter.minicore.utilities.Settings;
 import net.natroutter.minicore.utilities.Utils;
-import net.natroutter.natlibs.objects.BasePlayer;
+
 import net.natroutter.natlibs.utilities.StringHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -36,7 +36,7 @@ public class Gamemode extends Command {
 				sender.sendMessage(lang.InvalidArgs);
 				return false;
 			}
-			BasePlayer p = BasePlayer.from(sender);
+			Player p = (Player)sender;
 
 			if (p.hasPermission("minicore.gamemode")) {
 				
@@ -61,8 +61,8 @@ public class Gamemode extends Command {
 			}
 		} else if (args.length == 2) {
 			if (sender.hasPermission("minicore.gamemode.other")) {
-				
-				BasePlayer target = BasePlayer.from(Bukkit.getPlayer(args[1]));
+
+				Player target = Bukkit.getPlayer(args[1]);
 				if (target == null || !target.isOnline()) {
 					sender.sendMessage(lang.Prefix + lang.InvalidPlayer);
 					return false;
@@ -81,7 +81,7 @@ public class Gamemode extends Command {
 					message1.replace("{gamemode}", Utils.getGamemodeName(gm));
 
 					if (sender instanceof Player) {
-						BasePlayer p = BasePlayer.from(sender);
+						Player p = (Player)sender;
 						if (!target.getUniqueId().equals(p.getUniqueId())) {
 							Effect.sound(p, Settings.Sound.gamemode());
 							Effect.sound(target, Settings.Sound.gamemode());

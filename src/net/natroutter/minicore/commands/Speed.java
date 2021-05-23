@@ -7,7 +7,7 @@ import net.natroutter.minicore.utilities.Effect;
 import net.natroutter.minicore.utilities.Lang;
 import net.natroutter.minicore.utilities.Settings;
 import net.natroutter.minicore.utilities.Utils;
-import net.natroutter.natlibs.objects.BasePlayer;
+
 import net.natroutter.natlibs.utilities.StringHandler;
 import net.natroutter.natlibs.utilities.Utilities;
 import org.bukkit.Bukkit;
@@ -54,7 +54,7 @@ public class Speed extends Command {
 		
 	}
 	
-	private void ChangeSpeed(BasePlayer p, SpeedType type, Integer speed) {
+	private void ChangeSpeed(Player p, SpeedType type, Integer speed) {
 		StringHandler message = new StringHandler(lang.SpeedChanged);
 		message.setPrefix(lang.Prefix);
 		message.replaceAll("{type}", type.getName());
@@ -100,7 +100,7 @@ public class Speed extends Command {
 				sender.sendMessage(lang.InvalidArgs);
 				return false;
 			}
-			BasePlayer p = BasePlayer.from(sender);
+			Player p = (Player)sender;
 
 			if (p.hasPermission("minicore.speed")) {
 				
@@ -139,7 +139,7 @@ public class Speed extends Command {
 					return false;
 				}
 
-				BasePlayer target = BasePlayer.from(Bukkit.getPlayer(args[2]));
+				Player target = Bukkit.getPlayer(args[2]);
 				if (target == null || !target.isOnline()) {
 					sender.sendMessage(lang.Prefix + lang.InvalidPlayer);
 					return false;
@@ -152,7 +152,7 @@ public class Speed extends Command {
 				message.replaceAll("{speed}", speed.toString());
 
 				if (sender instanceof Player) {
-					BasePlayer p = BasePlayer.from(sender);
+					Player p = (Player)sender;
 					if (!target.getUniqueId().equals(p.getUniqueId())) {
 
 						ChangeSpeed(target, type, speed);

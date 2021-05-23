@@ -6,7 +6,7 @@ import net.natroutter.minicore.utilities.Lang;
 import net.natroutter.minicore.utilities.Settings;
 import net.natroutter.minicore.utilities.Utils;
 import net.natroutter.natlibs.handlers.Database.YamlDatabase;
-import net.natroutter.natlibs.objects.BasePlayer;
+
 import net.natroutter.natlibs.objects.ParticleSettings;
 import net.natroutter.natlibs.utilities.StringHandler;
 import net.natroutter.natlibs.utilities.Utilities;
@@ -36,7 +36,7 @@ public class Spawn extends Command {
 				sender.sendMessage(lang.InvalidArgs);
 				return false;
 			}
-			BasePlayer p = BasePlayer.from(sender);
+			Player p = (Player)sender;
 			Location loc = database.getLocation("General", "SpawnLoc");
 
 			if (loc != null) {
@@ -51,7 +51,7 @@ public class Spawn extends Command {
 			}
 
 		} else if (args.length == 1) {
-			BasePlayer target = BasePlayer.from(Bukkit.getPlayer(args[0]));
+			Player target = Bukkit.getPlayer(args[0]);
 			if (target == null || !target.isOnline()) {
 				sender.sendMessage(lang.Prefix + lang.InvalidPlayer);
 				return false;
@@ -61,7 +61,7 @@ public class Spawn extends Command {
 			if (loc != null) {
 
 				if (sender instanceof Player) {
-					BasePlayer p = BasePlayer.from(sender);
+					Player p = (Player)sender;
 					Effect.sound(p, Settings.Sound.teleported());
 
 					if (!target.getUniqueId().equals(p.getUniqueId())) {

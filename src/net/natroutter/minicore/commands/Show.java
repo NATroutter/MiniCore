@@ -10,7 +10,7 @@ import net.natroutter.minicore.handlers.Database.tables.PlayerData;
 import net.natroutter.minicore.handlers.Hooks;
 import net.natroutter.minicore.handlers.features.InfoHandler;
 import net.natroutter.minicore.utilities.*;
-import net.natroutter.natlibs.objects.BasePlayer;
+
 import net.natroutter.natlibs.objects.MojangApiInfo;
 import net.natroutter.natlibs.utilities.MojangAPI;
 import net.natroutter.natlibs.utilities.StringHandler;
@@ -94,7 +94,7 @@ public class Show extends Command {
             if (sender.hasPermission("minicore.show")) {
 
                 PlayerData data;
-                BasePlayer target = BasePlayer.from(Bukkit.getPlayer(args[0]));
+                Player target = Bukkit.getPlayer(args[0]);
                 if (target != null && target.isOnline()) {
                     data = InfoHandler.updatePlayer(target);
                 } else {

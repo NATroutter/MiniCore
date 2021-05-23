@@ -2,7 +2,6 @@ package net.natroutter.minicore.commands;
 
 import net.natroutter.minicore.MiniCore;
 import net.natroutter.minicore.utilities.*;
-import net.natroutter.natlibs.objects.BasePlayer;
 import net.natroutter.natlibs.utilities.StringHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -30,7 +29,7 @@ public class Cleaninventory extends Command {
                 sender.sendMessage(lang.InvalidArgs);
                 return false;
             }
-            BasePlayer p = BasePlayer.from(sender);
+            Player p = (Player)sender;
 
             if (p.hasPermission("minicore.cleaninventory")) {
                 p.getInventory().clear();
@@ -41,14 +40,14 @@ public class Cleaninventory extends Command {
             }
         } else if (args.length == 1) {
             if (sender.hasPermission("minicore.cleaninventory.other")) {
-                BasePlayer target = BasePlayer.from(Bukkit.getPlayer(args[0]));
+                Player target = Bukkit.getPlayer(args[0]);
                 if (target == null || !target.isOnline()) {
                     sender.sendMessage(lang.Prefix + lang.InvalidPlayer);
                     return false;
                 }
 
                 if (sender instanceof Player) {
-                    BasePlayer p = BasePlayer.from(sender);
+                    Player p = (Player) sender;
                     if (!target.getUniqueId().equals(p.getUniqueId())) {
                         target.getInventory().clear();
 

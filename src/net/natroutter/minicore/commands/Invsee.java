@@ -5,7 +5,6 @@ import net.natroutter.minicore.utilities.Effect;
 import net.natroutter.minicore.utilities.Lang;
 import net.natroutter.minicore.utilities.Settings;
 import net.natroutter.minicore.utilities.Utils;
-import net.natroutter.natlibs.objects.BasePlayer;
 import net.natroutter.natlibs.utilities.StringHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -30,15 +29,15 @@ public class Invsee extends Command {
 			sender.sendMessage(lang.OnlyIngame);
 			return false;
 		}
-		BasePlayer p = BasePlayer.from(sender);
+		Player p = (Player) sender;
 
 		if (args.length == 0) {
 			p.sendMessage(lang.Prefix + lang.InvalidPlayer);
 			
 		} else if (args.length == 1) {
 			if (p.hasPermission("minicore.invsee")) {
-				
-				BasePlayer target = BasePlayer.from(Bukkit.getPlayer(args[0]));
+
+				Player target = Bukkit.getPlayer(args[0]);
 				if (target == null || !target.isOnline()) {
 					p.sendMessage(lang.Prefix + lang.InvalidPlayer);
 					return false;

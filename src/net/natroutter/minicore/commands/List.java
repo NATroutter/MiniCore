@@ -8,7 +8,7 @@ import net.natroutter.minicore.utilities.Effect;
 import net.natroutter.minicore.utilities.Lang;
 import net.natroutter.minicore.utilities.Settings;
 import net.natroutter.minicore.utilities.Utils;
-import net.natroutter.natlibs.objects.BasePlayer;
+
 import net.natroutter.natlibs.utilities.StringHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -64,7 +64,7 @@ public class List extends Command {
                 sender.sendMessage(msgLine.build());
             }
             if (sender instanceof Player) {
-                BasePlayer p = BasePlayer.from(sender);
+                Player p = (Player)sender;
                 Effect.sound(p, Settings.Sound.modified());
             }
         } else {

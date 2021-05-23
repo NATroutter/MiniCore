@@ -2,7 +2,7 @@ package net.natroutter.minicore.commands;
 
 import net.natroutter.minicore.MiniCore;
 import net.natroutter.minicore.utilities.*;
-import net.natroutter.natlibs.objects.BasePlayer;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -29,7 +29,7 @@ public class Top extends Command {
             sender.sendMessage(lang.OnlyIngame);
             return false;
         }
-        BasePlayer p = BasePlayer.from(sender);
+        Player p = (Player)sender;
 
         if (args.length == 0) {
 

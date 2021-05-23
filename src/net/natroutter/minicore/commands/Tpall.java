@@ -2,7 +2,7 @@ package net.natroutter.minicore.commands;
 
 import net.natroutter.minicore.MiniCore;
 import net.natroutter.minicore.utilities.*;
-import net.natroutter.natlibs.objects.BasePlayer;
+
 import net.natroutter.natlibs.utilities.StringHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -29,10 +29,10 @@ public class Tpall extends Command {
             sender.sendMessage(lang.OnlyIngame);
             return false;
         }
-        BasePlayer p = BasePlayer.from(sender);
+        Player p = (Player)sender;
 
         if (args.length == 0) {
-            for (BasePlayer onlineP : BasePlayer.getOnlinePlayers()) {
+            for (Player onlineP : Bukkit.getOnlinePlayers()) {
                 onlineP.teleport(p);
                 Effect.sound(onlineP, Settings.Sound.teleported());
             }

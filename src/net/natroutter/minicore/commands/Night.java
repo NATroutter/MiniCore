@@ -2,7 +2,7 @@ package net.natroutter.minicore.commands;
 
 import net.natroutter.minicore.MiniCore;
 import net.natroutter.minicore.utilities.*;
-import net.natroutter.natlibs.objects.BasePlayer;
+
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.command.Command;
@@ -27,7 +27,7 @@ public class Night extends Command {
         if (args.length == 0) {
 
             if (sender instanceof Player) {
-                BasePlayer p = BasePlayer.from(sender);
+                Player p = (Player)sender;
                 p.getWorld().setTime(14000);
                 p.sendMessage(lang.Prefix + lang.TimeSetToNight);
                 Effect.sound(p, Settings.Sound.modified());

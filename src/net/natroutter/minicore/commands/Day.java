@@ -2,7 +2,6 @@ package net.natroutter.minicore.commands;
 
 import net.natroutter.minicore.MiniCore;
 import net.natroutter.minicore.utilities.*;
-import net.natroutter.natlibs.objects.BasePlayer;
 import net.natroutter.natlibs.utilities.StringHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
@@ -28,7 +27,7 @@ public class Day extends Command {
 
         if (args.length == 0) {
             if (sender instanceof Player) {
-                BasePlayer p = BasePlayer.from(sender);
+                Player p = (Player)sender;
                 p.getWorld().setTime(1000);
                 p.sendMessage(lang.Prefix + lang.TimeSetToDay);
                 Effect.sound(p, Settings.Sound.modified());

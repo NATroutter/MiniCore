@@ -4,7 +4,7 @@ public class Config {
 
     public String ChatFormat = "{prefix}§7{displayname}{suffix}§8: §f{message}";
     public String BroadcastFormat = "§4§lBroadcast §8§l» §f{message}";
-    public String DateFormat = "MM.dd.yyyy hh:mm";
+    public String DateFormat = "dd.MM.yyyy hh:mm";
 
     public Boolean UseParticleEffects = true;
     public Boolean UseSoundEffects = true;

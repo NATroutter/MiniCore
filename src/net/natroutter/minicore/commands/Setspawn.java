@@ -6,7 +6,7 @@ import net.natroutter.minicore.utilities.Lang;
 import net.natroutter.minicore.utilities.Settings;
 import net.natroutter.minicore.utilities.Utils;
 import net.natroutter.natlibs.handlers.Database.YamlDatabase;
-import net.natroutter.natlibs.objects.BasePlayer;
+
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -31,7 +31,7 @@ public class Setspawn extends Command {
 			return false;
 		}
 		
-		BasePlayer p = BasePlayer.from(sender);
+		Player p = (Player)sender;
 		if (args.length == 0) {
 			database.saveLoc("General", "SpawnLoc", p.getLocation());
 			p.getWorld().setSpawnLocation(p.getLocation());

@@ -6,7 +6,6 @@ import net.natroutter.minicore.utilities.Lang;
 import net.natroutter.minicore.utilities.Settings;
 import net.natroutter.minicore.utilities.Utils;
 import net.natroutter.natlibs.handlers.Database.YamlDatabase;
-import net.natroutter.natlibs.objects.BasePlayer;
 import net.natroutter.natlibs.objects.ParticleSettings;
 import net.natroutter.natlibs.utilities.Utilities;
 import org.bukkit.Location;
@@ -39,7 +38,7 @@ public class Cleanitem extends Command {
             sender.sendMessage(lang.OnlyIngame);
             return false;
         }
-        BasePlayer p = BasePlayer.from(sender);
+        Player p = (Player)sender;
 
         if (args.length == 0) {
 

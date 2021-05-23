@@ -6,10 +6,11 @@ import net.natroutter.minicore.handlers.Database.tables.PlayerData;
 import net.natroutter.minicore.utilities.Config;
 import net.natroutter.minicore.utilities.Lang;
 import net.natroutter.natlibs.handlers.Database.YamlDatabase;
-import net.natroutter.natlibs.objects.BasePlayer;
+
 import net.natroutter.natlibs.utilities.StringHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -23,7 +24,7 @@ public class StatusMessages implements Listener {
 
     @EventHandler
     public void onJoin(PlayerJoinEvent e) {
-        BasePlayer p = BasePlayer.from(e.getPlayer());
+        Player p = e.getPlayer();
 
         //Force teleport palyers to psawn
         if (config.ForceSpawnOnJoin) {
@@ -81,7 +82,7 @@ public class StatusMessages implements Listener {
 
     @EventHandler
     public void onJoin(PlayerQuitEvent e) {
-        BasePlayer p = BasePlayer.from(e.getPlayer());
+        Player p = e.getPlayer();
         if (config.DisableQuitMessage) {
             e.setQuitMessage(null);
         } else {

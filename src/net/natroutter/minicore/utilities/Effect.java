@@ -2,11 +2,11 @@ package net.natroutter.minicore.utilities;
 
 import net.natroutter.minicore.MiniCore;
 import net.natroutter.minicore.objects.SoundSettings;
-import net.natroutter.natlibs.objects.BasePlayer;
 import net.natroutter.natlibs.objects.ParticleSettings;
 import net.natroutter.natlibs.utilities.Utilities;
 import org.bukkit.Sound;
 import org.bukkit.SoundCategory;
+import org.bukkit.entity.Player;
 
 public class Effect {
 
@@ -20,7 +20,7 @@ public class Effect {
         }
     }
 
-    public static void sound(BasePlayer p, SoundSettings set) {
+    public static void sound(Player p, SoundSettings set) {
         if (config.UseSoundEffects) {
             p.playSound(p.getLocation(), set.getSound(), SoundCategory.MASTER ,set.getVolume() ,set.getPitch());
         }

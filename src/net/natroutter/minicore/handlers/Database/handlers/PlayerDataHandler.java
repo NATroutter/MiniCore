@@ -4,7 +4,7 @@ import com.j256.ormlite.dao.Dao;
 import net.natroutter.minicore.MiniCore;
 import net.natroutter.minicore.handlers.Database.Database;
 import net.natroutter.minicore.handlers.Database.tables.PlayerData;
-import net.natroutter.natlibs.objects.BasePlayer;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.command.ConsoleCommandSender;

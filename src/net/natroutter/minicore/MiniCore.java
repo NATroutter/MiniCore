@@ -24,6 +24,9 @@ public class MiniCore extends JavaPlugin {
         Add commands:
             msg, reply, socialspy, homes tpa tpahere, tpaccept, tpdeny, signedit
 
+        Add cooldowns for some commands with configs
+        move check for teleporting
+
     */
 
     private static Hooks hooks;

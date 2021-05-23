@@ -2,7 +2,7 @@ package net.natroutter.minicore.commands;
 
 import net.natroutter.minicore.MiniCore;
 import net.natroutter.minicore.utilities.*;
-import net.natroutter.natlibs.objects.BasePlayer;
+
 import net.natroutter.natlibs.utilities.StringHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -30,13 +30,13 @@ public class Tphere extends Command {
             sender.sendMessage(lang.OnlyIngame);
             return false;
         }
-        BasePlayer p = BasePlayer.from(sender);
+        Player p = (Player)sender;
 
         if (args.length == 0) {
             p.sendMessage(lang.Prefix + lang.InvalidPlayer);
         } else {
 
-            BasePlayer target = BasePlayer.from(Bukkit.getPlayer(args[0]));
+            Player target = Bukkit.getPlayer(args[0]);
             if (target == null || !target.isOnline()) {
                 p.sendMessage(lang.Prefix + lang.InvalidPlayer);
                 return false;

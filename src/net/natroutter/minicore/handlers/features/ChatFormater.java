@@ -5,8 +5,9 @@ import net.milkbowl.vault.chat.Chat;
 import net.natroutter.minicore.MiniCore;
 import net.natroutter.minicore.handlers.Hooks;
 import net.natroutter.minicore.utilities.Config;
-import net.natroutter.natlibs.objects.BasePlayer;
+
 import net.natroutter.natlibs.utilities.StringHandler;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
@@ -20,7 +21,7 @@ public class ChatFormater implements Listener {
 
     @EventHandler
     public void onChat(AsyncPlayerChatEvent e) {
-        BasePlayer p = BasePlayer.from(e.getPlayer());
+        Player p = e.getPlayer();
 
         StringHandler message = new StringHandler(e.getMessage());
         message.replaceAll("%", "%%");
