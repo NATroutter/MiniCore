@@ -37,51 +37,57 @@ public class Spawn extends Command {
 				return false;
 			}
 			Player p = (Player)sender;
-			Location loc = database.getLocation("General", "SpawnLoc");
+			if (p.hasPermission("minicore.spawn")) {
+				Location loc = database.getLocation("General", "SpawnLoc");
 
-			if (loc != null) {
-				Effect.particle(Settings.Particle.teleportStart(p.getLocation()));
-				p.teleport(loc);
-				Effect.particle(Settings.Particle.teleportEnd(loc));
-				Effect.sound(p, Settings.Sound.teleported());
+				if (loc != null) {
+					Effect.particle(Settings.Particle.teleportStart(p.getLocation()));
+					p.teleport(loc);
+					Effect.particle(Settings.Particle.teleportEnd(loc));
+					Effect.sound(p, Settings.Sound.teleported());
 
-				p.sendMessage(lang.Prefix + lang.TeleportedToSpawn);
-			} else {
-				p.sendMessage(lang.Prefix + lang.SpawnNotset);
+					p.sendMessage(lang.Prefix + lang.TeleportedToSpawn);
+				} else {
+					p.sendMessage(lang.Prefix + lang.SpawnNotset);
+				}
 			}
 
 		} else if (args.length == 1) {
-			Player target = Bukkit.getPlayer(args[0]);
-			if (target == null || !target.isOnline()) {
-				sender.sendMessage(lang.Prefix + lang.InvalidPlayer);
-				return false;
-			}
-
-			Location loc = database.getLocation("General", "SpawnLoc");
-			if (loc != null) {
-
-				if (sender instanceof Player) {
-					Player p = (Player)sender;
-					Effect.sound(p, Settings.Sound.teleported());
-
-					if (!target.getUniqueId().equals(p.getUniqueId())) {
-						Effect.particle(Settings.Particle.teleportStart(target.getLocation()));
-						target.teleport(loc);
-						Effect.sound(target, Settings.Sound.teleported());
-						StringHandler message = new StringHandler(lang.TeleportedToSpawnOther).setPrefix(lang.Prefix);
-						message.replaceAll("{player}", target.getName());
-						message.send(p);
-					} else {
-						Effect.particle(Settings.Particle.teleportStart(p.getLocation()));
-						p.sendMessage(lang.Prefix + lang.TeleportedToSpawn);
-						p.teleport(loc);
-					}
-
-					Effect.particle(Settings.Particle.teleportEnd(loc));
+			if (sender.hasPermission("minicore.spawn.other")) {
+				Player target = Bukkit.getPlayer(args[0]);
+				if (target == null || !target.isOnline()) {
+					sender.sendMessage(lang.Prefix + lang.InvalidPlayer);
+					return false;
 				}
 
+				Location loc = database.getLocation("General", "SpawnLoc");
+				if (loc != null) {
+
+					if (sender instanceof Player) {
+						Player p = (Player)sender;
+						Effect.sound(p, Settings.Sound.teleported());
+
+						if (!target.getUniqueId().equals(p.getUniqueId())) {
+							Effect.particle(Settings.Particle.teleportStart(target.getLocation()));
+							target.teleport(loc);
+							Effect.sound(target, Settings.Sound.teleported());
+							StringHandler message = new StringHandler(lang.TeleportedToSpawnOther).setPrefix(lang.Prefix);
+							message.replaceAll("{player}", target.getName());
+							message.send(p);
+						} else {
+							Effect.particle(Settings.Particle.teleportStart(p.getLocation()));
+							p.sendMessage(lang.Prefix + lang.TeleportedToSpawn);
+							p.teleport(loc);
+						}
+
+						Effect.particle(Settings.Particle.teleportEnd(loc));
+					}
+
+				} else {
+					sender.sendMessage(lang.Prefix + lang.SpawnNotset);
+				}
 			} else {
-				sender.sendMessage(lang.Prefix + lang.SpawnNotset);
+				sender.sendMessage(lang.Prefix + lang.NoPerm);
 			}
 		} else {
 			sender.sendMessage(lang.Prefix + lang.ToomanyArgs);

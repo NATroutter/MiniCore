@@ -5,6 +5,7 @@ import net.natroutter.minicore.handlers.Database.handlers.PlayerDataHandler;
 import net.natroutter.minicore.handlers.Database.tables.PlayerData;
 import net.natroutter.minicore.utilities.Config;
 import net.natroutter.minicore.utilities.Lang;
+import net.natroutter.minicore.utilities.Utils;
 import net.natroutter.natlibs.handlers.Database.YamlDatabase;
 
 import net.natroutter.natlibs.utilities.StringHandler;
@@ -21,10 +22,23 @@ public class StatusMessages implements Listener {
     private Config config = MiniCore.getConf();
     private Lang lang = MiniCore.getLang();
     private YamlDatabase database = MiniCore.getYamlDatabase();
+    private PlayerDataHandler pdh = MiniCore.getDataHandler();
 
     @EventHandler
     public void onJoin(PlayerJoinEvent e) {
         Player p = e.getPlayer();
+
+        if (config.DisableFlyOnJoin) {
+            p.setAllowFlight(false);
+            p.setFlying(false);
+        } else {
+            if (pdh.get(p.getUniqueId()) != null) {
+                if (pdh.get(p.getUniqueId()).getAllowedfly()) {
+                    p.setAllowFlight(true);
+                    p.setFlying(true);
+                }
+            }
+        }
 
         //Force teleport palyers to psawn
         if (config.ForceSpawnOnJoin) {
@@ -38,10 +52,10 @@ public class StatusMessages implements Listener {
 
         //Disable god mode
         if (config.DisableGodOnJoin) {
-            PlayerData data = PlayerDataHandler.queryForID(p.getUniqueId());
+            PlayerData data = pdh.get(p.getUniqueId());
             if (data != null) {
                 data.setGod(false);
-                PlayerDataHandler.updateForID(data);
+                pdh.set(data);
             }
         }
 
@@ -78,10 +92,13 @@ public class StatusMessages implements Listener {
                 }
             }
         }
+
+        if (!Utils.isValidPlayer(p)) {return;}
+        InfoHandler.updatePlayer(p);
     }
 
     @EventHandler
-    public void onJoin(PlayerQuitEvent e) {
+    public void onQuit(PlayerQuitEvent e) {
         Player p = e.getPlayer();
         if (config.DisableQuitMessage) {
             e.setQuitMessage(null);

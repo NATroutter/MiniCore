@@ -25,6 +25,11 @@ public class Enderchest extends Command {
 	
 	@Override
 	public boolean execute(CommandSender sender, String label, String[] args) {
+		if (!sender.hasPermission("minicore.enderchest")) {
+			sender.sendMessage(lang.Prefix + lang.NoPerm);
+			return false;
+		}
+
 		if (!(sender instanceof Player)) {
 			sender.sendMessage(lang.OnlyIngame);
 			return false;

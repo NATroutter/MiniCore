@@ -18,8 +18,6 @@ public class Cleanchat extends Command {
 
     public Cleanchat() {
         super("");
-        this.setPermission("minicore.cleanchat");
-        this.setPermissionMessage(lang.NoPerm);
         this.setAliases(Collections.singletonList("cc"));
     }
 
@@ -28,6 +26,10 @@ public class Cleanchat extends Command {
 
     @Override
     public boolean execute(CommandSender sender, String label, String[] args) {
+        if (!sender.hasPermission("minicore.cleanchat")) {
+            sender.sendMessage(lang.Prefix + lang.NoPerm);
+            return false;
+        }
 
         if (args.length == 0) {
             for (int i = 0; i < 255; i++) {

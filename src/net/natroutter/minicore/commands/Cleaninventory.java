@@ -23,6 +23,10 @@ public class Cleaninventory extends Command {
 
     @Override
     public boolean execute(CommandSender sender, String label, String[] args) {
+        if (!sender.hasPermission("minicore.Cleaninventory")) {
+            sender.sendMessage(lang.Prefix + lang.NoPerm);
+            return false;
+        }
 
         if (args.length == 0) {
             if (!(sender instanceof Player)) {

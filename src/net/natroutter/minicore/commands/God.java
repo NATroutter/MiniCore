@@ -21,6 +21,7 @@ public class God extends Command {
 
     private final Lang lang = MiniCore.getLang();
     private final Config config = MiniCore.getConf();
+    private final PlayerDataHandler pdh = MiniCore.getDataHandler();
 
     @Override
     public boolean execute(CommandSender sender, String label, String[] args) {
@@ -32,7 +33,7 @@ public class God extends Command {
             Player p = (Player)sender;
 
             if (p.hasPermission("minicore.god")) {
-                PlayerData data = PlayerDataHandler.queryForID(p.getUniqueId());
+                PlayerData data = pdh.get(p.getUniqueId());
                 if (data == null) {
                     return false;
                 }
@@ -41,7 +42,7 @@ public class God extends Command {
                 StringHandler message = new StringHandler(lang.GodToggled).setPrefix(lang.Prefix);
                 message.replaceAll("{status}", newstate ? lang.ToggleStates.enabled : lang.ToggleStates.disabled);
                 message.send(p);
-                PlayerDataHandler.updateForID(data);
+                pdh.set(data);
                 Effect.sound(p, Settings.Sound.god());
                 Effect.particle(Settings.Particle.God(p.getLocation()));
             } else {
@@ -55,7 +56,7 @@ public class God extends Command {
                     return false;
                 }
 
-                PlayerData data = PlayerDataHandler.queryForID(target.getUniqueId());
+                PlayerData data = pdh.get(target.getUniqueId());
                 if (data == null) {
                     return false;
                 }
@@ -70,19 +71,19 @@ public class God extends Command {
                     Player p = (Player)sender;
                     if (!target.getUniqueId().equals(p.getUniqueId())) {
                         message.send(p);
-                        PlayerDataHandler.updateForID(data);
+                        pdh.set(data);
                         Effect.sound(target, Settings.Sound.god());
                         Effect.sound(p, Settings.Sound.god());
                         Effect.particle(Settings.Particle.God(target.getLocation()));
                     } else {
                         message.send(p);
-                        PlayerDataHandler.updateForID(data);
+                        pdh.set(data);
                         Effect.sound(p, Settings.Sound.god());
                         Effect.particle(Settings.Particle.God(target.getLocation()));
                     }
                 } else {
                     sender.sendMessage(message.build());
-                    PlayerDataHandler.updateForID(data);
+                    pdh.set(data);
                     Effect.sound(target, Settings.Sound.god());
                     Effect.particle(Settings.Particle.God(target.getLocation()));
                 }

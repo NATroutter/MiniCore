@@ -16,8 +16,6 @@ public class Top extends Command {
 
     public Top() {
         super("");
-        this.setPermission("minicore.top");
-        this.setPermissionMessage(lang.NoPerm);
     }
 
     private final Lang lang = MiniCore.getLang();
@@ -25,6 +23,11 @@ public class Top extends Command {
 
     @Override
     public boolean execute(CommandSender sender, String label, String[] args) {
+        if (!sender.hasPermission("minicore.top")) {
+            sender.sendMessage(lang.Prefix + lang.NoPerm);
+            return false;
+        }
+
         if (!(sender instanceof Player)) {
             sender.sendMessage(lang.OnlyIngame);
             return false;

@@ -3,6 +3,7 @@ package net.natroutter.minicore.handlers.features;
 import net.natroutter.minicore.MiniCore;
 import net.natroutter.minicore.handlers.Database.handlers.PlayerDataHandler;
 import net.natroutter.minicore.handlers.Database.tables.PlayerData;
+import net.natroutter.minicore.utilities.Utils;
 import net.natroutter.natlibs.utilities.Utilities;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
@@ -22,14 +23,12 @@ public class InfoHandler implements Listener {
 
     private static final Utilities utils = MiniCore.getUtilities();
     public static final Character sep = '/';
+    private static final PlayerDataHandler pdh = MiniCore.getDataHandler();
 
-    @EventHandler
-    public void onJoin(PlayerJoinEvent e) {
-        updatePlayer(e.getPlayer());
-    }
 
     @EventHandler
     public void onLeave(PlayerQuitEvent e) {
+        if (!Utils.isValidPlayer(e.getPlayer())) {return;}
         updatePlayer(e.getPlayer());
     }
 
@@ -37,6 +36,7 @@ public class InfoHandler implements Listener {
     public void onDamage(EntityDamageEvent e) {
         if (e.getEntity() instanceof Player) {
             Player p = (Player) e.getEntity();
+            if (!Utils.isValidPlayer(p)) {return;}
             updatePlayer(p);
         }
     }
@@ -45,17 +45,20 @@ public class InfoHandler implements Listener {
     public void onFoodLevelChange(FoodLevelChangeEvent e) {
         if (e.getEntity() instanceof Player) {
             Player p = (Player) e.getEntity();
+            if (!Utils.isValidPlayer(p)) {return;}
             updatePlayer(p);
         }
     }
 
     @EventHandler
     public void onLeave(PlayerExpChangeEvent e) {
+        if (!Utils.isValidPlayer(e.getPlayer())) {return;}
         updatePlayer(e.getPlayer());
     }
 
     @EventHandler
     public void onGamemodeChange(PlayerGameModeChangeEvent e) {
+        if (!Utils.isValidPlayer(e.getPlayer())) {return;}
         updatePlayer(e.getPlayer());
     }
 
@@ -63,6 +66,7 @@ public class InfoHandler implements Listener {
     public void onVehicleEnter(VehicleEnterEvent e) {
         if (e.getEntered() instanceof Player) {
             Player p = (Player) e.getEntered();
+            if (!Utils.isValidPlayer(p)) {return;}
             updatePlayer(p);
         }
     }
@@ -71,6 +75,7 @@ public class InfoHandler implements Listener {
     public void onGamemodeChange(VehicleExitEvent e) {
         if (e.getExited() instanceof Player) {
             Player p = (Player) e.getExited();
+            if (!Utils.isValidPlayer(p)) {return;}
             updatePlayer(p);
         }
     }
@@ -80,40 +85,43 @@ public class InfoHandler implements Listener {
         if (!e.hasBlock()) {return;}
         if (!e.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {return;}
         if (!e.getClickedBlock().getType().name().endsWith("_BED")) {return;}
+        if (!Utils.isValidPlayer(e.getPlayer())) {return;}
         updatePlayer(e.getPlayer());
     }
 
     @EventHandler
     public void onTeleport(PlayerTeleportEvent e) {
+        if (!Utils.isValidPlayer(e.getPlayer())) {return;}
         updatePlayer(e.getPlayer());
     }
 
-    public static PlayerData updatePlayer(OfflinePlayer p) {
-        PlayerData data = PlayerDataHandler.queryForID(p.getUniqueId());
+    public static PlayerData updatePlayer(Player p) {
+        PlayerData data = pdh.get(p.getUniqueId());
         if (data != null) {
-            if (p.isOnline()) {
-                Player onlineP = p.getPlayer();
-                if (onlineP != null) {
-                    if (onlineP.getAddress() != null) {
-                        data.setIp(onlineP.getAddress().getAddress().getHostAddress());
-                    }
-                    data.setDisplayname(onlineP.getDisplayName());
-                    data.setLastloc(utils.serializeLocation(onlineP.getLocation(), sep));
-                    data.setLocale(onlineP.getLocale());
-                    data.setHealth(onlineP.getHealth());
-                    data.setMaxhealth(onlineP.getMaxHealth());
-                    data.setFood(onlineP.getFoodLevel());
-                    data.setLevel(onlineP.getLevel());
-                    data.setGamemode(onlineP.getGameMode().toString());
-                    data.setFlyspeed(onlineP.getFlySpeed());
-                    data.setWalkspeed(onlineP.getWalkSpeed());
-                    data.setWorld(onlineP.getWorld().getName());
-                    data.setFlying(onlineP.isFlying());
-                    data.setAllowedfly(onlineP.getAllowFlight());
-                    data.setInvehicle(onlineP.isInsideVehicle());
-                    data.setLastplayed(System.currentTimeMillis());
+
+            try {
+                if (p.getAddress() != null && p.getAddress().getAddress().getHostAddress() != null) {
+                    data.setIp(p.getAddress().getAddress().getHostAddress());
                 }
-            }
+            }catch (Exception ignored) {}
+
+            data.setDisplayname(p.getDisplayName());
+            data.setLastloc(utils.serializeLocation(p.getLocation(), sep));
+            data.setLocale(p.getLocale());
+            data.setHealth(p.getHealth());
+            data.setMaxhealth(p.getMaxHealth());
+            data.setFood(p.getFoodLevel());
+            data.setLevel(p.getLevel());
+            data.setGamemode(p.getGameMode().name());
+            data.setFlyspeed(p.getFlySpeed());
+            data.setWalkspeed(p.getWalkSpeed());
+            data.setWorld(p.getWorld().getName());
+            data.setFlying(p.isFlying());
+            data.setAllowedfly(p.getAllowFlight());
+            data.setInvehicle(p.isInsideVehicle());
+            data.setLastplayed(System.currentTimeMillis());
+
+
             data.setName(p.getName());
             data.setOnline(p.isOnline());
             data.setFirstplayed(p.getFirstPlayed());
@@ -122,7 +130,7 @@ public class InfoHandler implements Listener {
             } else {
                 data.setBedlocation("Unknown");
             }
-            PlayerDataHandler.updateForID(data);
+            pdh.set(data);
         }
         return data;
     }

@@ -17,8 +17,6 @@ public class Broadcast extends Command {
 
     public Broadcast() {
         super("");
-        this.setPermission("minicore.broadcast");
-        this.setPermissionMessage(lang.NoPerm);
     }
 
     private final Lang lang = MiniCore.getLang();
@@ -26,6 +24,10 @@ public class Broadcast extends Command {
 
     @Override
     public boolean execute(CommandSender sender, String label, String[] args) {
+        if (!sender.hasPermission("minicore.broadcast")) {
+            sender.sendMessage(lang.Prefix + lang.NoPerm);
+            return false;
+        }
 
         if (args.length == 0) {
             sender.sendMessage(lang.Prefix + lang.InvalidBroadcastMessage);

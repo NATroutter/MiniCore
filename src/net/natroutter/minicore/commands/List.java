@@ -22,8 +22,6 @@ public class List extends Command {
 
     public List() {
         super("");
-        this.setPermission("minicore.list");
-        this.setPermissionMessage(lang.NoPerm);
     }
 
     private final Lang lang = MiniCore.getLang();
@@ -31,6 +29,11 @@ public class List extends Command {
 
     @Override
     public boolean execute(CommandSender sender, String label, String[] args) {
+        if (!sender.hasPermission("minicore.list")) {
+            sender.sendMessage(lang.Prefix + lang.NoPerm);
+            return false;
+        }
+
         if (args.length == 0) {
 
             ArrayList<String> playerEntries = new ArrayList<>();

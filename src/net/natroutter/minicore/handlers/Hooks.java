@@ -11,6 +11,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 @SuppressWarnings({"unused"})
 public class Hooks {
 
+    //TODO vaihda tämä paska motikinking syncissä olevan versioon se on 10x parempi :D
+
     public vault_Hook vault;
     public GeneralHook PlaceHolderApi;
 

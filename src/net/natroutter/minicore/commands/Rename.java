@@ -21,12 +21,15 @@ public class Rename extends Command {
 
 	public Rename() {
 		super("");
-		this.setPermission("minicore.rename");
-		this.setPermissionMessage(lang.Prefix + lang.NoPerm);
 	}
 	
 	@Override
 	public boolean execute(CommandSender sender, String label, String[] args) {
+		if (!sender.hasPermission("minicore.rename")) {
+			sender.sendMessage(lang.Prefix + lang.NoPerm);
+			return false;
+		}
+
 		if (!(sender instanceof Player)) {
 			sender.sendMessage(lang.OnlyIngame);
 			return false;

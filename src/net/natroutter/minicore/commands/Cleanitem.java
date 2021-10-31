@@ -25,8 +25,6 @@ public class Cleanitem extends Command {
 
     public Cleanitem() {
         super("");
-        this.setPermission("minicore.cleanitem");
-        this.setPermissionMessage(lang.NoPerm);
         this.setAliases(Collections.singletonList("citem"));
     }
 
@@ -34,6 +32,11 @@ public class Cleanitem extends Command {
 
     @Override
     public boolean execute(CommandSender sender, String label, String[] args) {
+        if (!sender.hasPermission("minicore.cleanitem")) {
+            sender.sendMessage(lang.Prefix + lang.NoPerm);
+            return false;
+        }
+
         if (!(sender instanceof Player)) {
             sender.sendMessage(lang.OnlyIngame);
             return false;

@@ -15,6 +15,10 @@ public class Utils {
 
     private static final Lang lang = MiniCore.getLang();
 
+    public static boolean isValidPlayer(Player p) {
+        return Bukkit.getOnlinePlayers().contains(p);
+    }
+
     public static ArrayList<String> playerNameList() {
         ArrayList<String> list = new ArrayList<>();
         for (Player p : Bukkit.getOnlinePlayers()) {

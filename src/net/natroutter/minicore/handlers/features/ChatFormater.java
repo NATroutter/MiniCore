@@ -28,6 +28,8 @@ public class ChatFormater implements Listener {
 
         if (p.hasPermission("minicore.chatcolor")) {
             message.replaceAll("&", "§");
+        } else {
+            message.stripColors();
         }
 
         String prefix = "";

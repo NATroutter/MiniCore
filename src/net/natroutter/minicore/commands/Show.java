@@ -43,6 +43,7 @@ public class Show extends Command {
     private Config config = MiniCore.getConf();
     private Utilities utils = MiniCore.getUtilities();
     private MojangAPI mojangAPI = MiniCore.getMojangAPI();
+    private final PlayerDataHandler pdh = MiniCore.getDataHandler();
 
     public Show() {
         super("");
@@ -98,7 +99,7 @@ public class Show extends Command {
                 if (target != null && target.isOnline()) {
                     data = InfoHandler.updatePlayer(target);
                 } else {
-                    data = PlayerDataHandler.queryForID(mojangAPI.getUUID(args[0]));
+                    data = pdh.get(mojangAPI.getUUID(args[0]));
                 }
                 if (data==null) {
                     sender.sendMessage(lang.Prefix + lang.InvalidPlayer);

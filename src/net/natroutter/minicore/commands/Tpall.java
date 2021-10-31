@@ -16,8 +16,6 @@ public class Tpall extends Command {
 
     public Tpall() {
         super("");
-        this.setPermission("minicore.tpall");
-        this.setPermissionMessage(lang.NoPerm);
     }
 
     private final Lang lang = MiniCore.getLang();
@@ -25,6 +23,11 @@ public class Tpall extends Command {
 
     @Override
     public boolean execute(CommandSender sender, String label, String[] args) {
+        if (!sender.hasPermission("minicore.tpall")) {
+            sender.sendMessage(lang.Prefix + lang.NoPerm);
+            return false;
+        }
+
         if (!(sender instanceof Player)) {
             sender.sendMessage(lang.OnlyIngame);
             return false;

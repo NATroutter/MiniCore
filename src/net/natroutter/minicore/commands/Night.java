@@ -15,8 +15,6 @@ public class Night extends Command {
 
     public Night() {
         super("");
-        this.setPermission("minicore.night");
-        this.setPermissionMessage(lang.NoPerm);
     }
 
     private final Lang lang = MiniCore.getLang();
@@ -24,6 +22,11 @@ public class Night extends Command {
 
     @Override
     public boolean execute(CommandSender sender, String label, String[] args) {
+        if (!sender.hasPermission("minicore.night")) {
+            sender.sendMessage(lang.Prefix + lang.NoPerm);
+            return false;
+        }
+
         if (args.length == 0) {
 
             if (sender instanceof Player) {

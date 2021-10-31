@@ -1,6 +1,7 @@
 package net.natroutter.minicore;
 
 import net.natroutter.minicore.commands.*;
+import net.natroutter.minicore.handlers.Database.handlers.PlayerDataHandler;
 import net.natroutter.minicore.handlers.features.*;
 import net.natroutter.minicore.handlers.Database.Database;
 import net.natroutter.minicore.handlers.Hooks;
@@ -15,6 +16,7 @@ import net.natroutter.natlibs.objects.CondCommand;
 import net.natroutter.natlibs.objects.ConfType;
 import net.natroutter.natlibs.utilities.MojangAPI;
 import net.natroutter.natlibs.utilities.Utilities;
+import org.bukkit.block.data.type.Stairs;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class MiniCore extends JavaPlugin {
@@ -32,18 +34,18 @@ public class MiniCore extends JavaPlugin {
     private static Hooks hooks;
     private static Config config;
     private static Lang lang;
-    private static Database database;
     private static YamlDatabase yamlDatabase;
     private static Utilities utilities;
     private static MojangAPI mojangAPI;
+    private static PlayerDataHandler playerDataHandler;
 
     public static Hooks getHooks(){return hooks;}
     public static Config getConf(){return config;}
     public static Lang getLang(){return lang;}
-    public static Database getDatabase(){return database;}
     public static YamlDatabase getYamlDatabase(){return yamlDatabase;}
     public static Utilities getUtilities(){return utilities;}
     public static MojangAPI getMojangAPI(){return mojangAPI;}
+    public static PlayerDataHandler getDataHandler(){return playerDataHandler;}
 
     @Override
     public void onEnable() {
@@ -52,7 +54,7 @@ public class MiniCore extends JavaPlugin {
         hooks = new Hooks(this);
         config = new FileManager(this, ConfType.Config).load(Config.class);
         lang = new FileManager(this, ConfType.Lang).load(Lang.class);
-        database = new Database(this);
+        playerDataHandler = new PlayerDataHandler(this, new Database(this), 30 * 60);
         yamlDatabase = new YamlDatabase(this);
         utilities = new Utilities(this);
         mojangAPI = new MojangAPI(this);
@@ -84,8 +86,10 @@ public class MiniCore extends JavaPlugin {
                 new CondCommand(Tpall.class, config.EnabledFeatures.Tpall),
                 new CondCommand(Tphere.class, config.EnabledFeatures.Tphere)
         );
+        if (config.UseChatFormating) {
+            evm.RegisterListeners(ChatFormater.class); //TODO replace this with conditional system like above!!!
+        }
         evm.RegisterListeners(
-                ChatFormater.class,
                 GodHandler.class,
                 InfoHandler.class,
                 SignColors.class,

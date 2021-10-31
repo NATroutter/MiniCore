@@ -17,8 +17,6 @@ public class Tphere extends Command {
 
     public Tphere() {
         super("");
-        this.setPermission("minicore.tphere");
-        this.setPermissionMessage(lang.NoPerm);
     }
 
     private final Lang lang = MiniCore.getLang();
@@ -26,6 +24,11 @@ public class Tphere extends Command {
 
     @Override
     public boolean execute(CommandSender sender, String label, String[] args) {
+        if (!sender.hasPermission("minicore.tphere")) {
+            sender.sendMessage(lang.Prefix + lang.NoPerm);
+            return false;
+        }
+
         if (!(sender instanceof Player)) {
             sender.sendMessage(lang.OnlyIngame);
             return false;
