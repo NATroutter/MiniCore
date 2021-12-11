@@ -19,7 +19,7 @@ import net.natroutter.natlibs.utilities.Utilities;
 import org.bukkit.block.data.type.Stairs;
 import org.bukkit.plugin.java.JavaPlugin;
 
-public class MiniCore extends JavaPlugin {
+public class MiniCore extends JavaPlugin implements NATLibs {
 
     /*
         TODO
@@ -49,7 +49,7 @@ public class MiniCore extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        NATLibs lib = new NATLibs(this);
+        registerLibrary(this);
 
         hooks = new Hooks(this);
         config = new FileManager(this, ConfType.Config).load(Config.class);
