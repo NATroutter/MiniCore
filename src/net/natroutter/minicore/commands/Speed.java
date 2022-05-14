@@ -1,47 +1,56 @@
 package net.natroutter.minicore.commands;
 
-import net.natroutter.minicore.MiniCore;
-import net.natroutter.minicore.handlers.features.InfoHandler;
-import net.natroutter.minicore.objects.SoundSettings;
-import net.natroutter.minicore.utilities.Effect;
-import net.natroutter.minicore.utilities.Lang;
-import net.natroutter.minicore.utilities.Settings;
+import net.natroutter.minicore.Handler;
+import net.natroutter.minicore.files.Translations;
+import net.natroutter.minicore.utilities.Effects;
+import net.natroutter.minicore.objects.Particles;
+import net.natroutter.minicore.objects.Sounds;
 import net.natroutter.minicore.utilities.Utils;
 
+import net.natroutter.natlibs.handlers.LangHandler.language.LangManager;
 import net.natroutter.natlibs.utilities.StringHandler;
 import net.natroutter.natlibs.utilities.Utilities;
 import org.bukkit.Bukkit;
+import org.bukkit.Effect;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Flying;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.TraderLlama;
+import org.bukkit.util.StringUtil;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class Speed extends Command {
 
-	private static final Lang lang = MiniCore.getLang();
-	private final Utilities utils = MiniCore.getUtilities();
-	
-	public Speed() {
-		super("");
+	private LangManager lang;
+	private Effects effects;
+	private Utilities utilities;
+	private Utils utils;
+
+	public Speed(Handler handler) {
+		super("Speed");
+		lang = handler.getLang();
+		effects = handler.getEffects();
+		utilities = handler.getUtilities();
+		utils = handler.getUtils();
 	}
 
 	private enum SpeedType {
-		Flying(true, lang.SpeedTypes.Flying),
-		Walking(false, lang.SpeedTypes.Walking);
+		Flying,
+		Walking;
 
-		private final boolean fly;
-		private final String name;
-		SpeedType(boolean fly, String name) {
-			this.fly = fly;
-			this.name = name;
+		public String getName(LangManager lang) {
+			switch (this) {
+				case Flying -> lang.get(Translations.SpeedTypes_Flying);
+				case Walking -> lang.get(Translations.SpeedTypes_Walking);
+			}
+			return null;
 		}
-		public String getName() {return name;}
-		public boolean isFlying() { return fly; }
+		public boolean isFlying() {
+			return this.equals(Flying);
+		}
 		
 		public static SpeedType getType(String type) {
 			if (type.equalsIgnoreCase(Walking.name())) {
@@ -55,12 +64,12 @@ public class Speed extends Command {
 	}
 	
 	private void ChangeSpeed(Player p, SpeedType type, Integer speed) {
-		StringHandler message = new StringHandler(lang.SpeedChanged);
-		message.setPrefix(lang.Prefix);
-		message.replaceAll("{type}", type.getName());
-		message.replaceAll("{speed}", speed);
+		StringHandler message = new StringHandler(lang.get(Translations.SpeedChanged));
+		message.setPrefix(lang.get(Translations.Prefix));
+		message.replaceAll("%type%", type.getName(lang));
+		message.replaceAll("%speed%", speed);
 		
-		Float parsedSpeed = utils.parseSpeed(speed, type.isFlying());
+		Float parsedSpeed = utilities.parseSpeed(speed, type.isFlying());
 		if (type.isFlying()) {
 			p.setFlySpeed(parsedSpeed);
 		} else {
@@ -68,39 +77,39 @@ public class Speed extends Command {
 		}
 		
 		message.send(p);
-		InfoHandler.updatePlayer(p);
 	}
 	
 	private boolean ValidSpeed(CommandSender sender, String speed) {
 		try {
 			int ParsedSpeed = Integer.parseInt(speed);
-			if (utils.isBetween(ParsedSpeed, 1, 10)) {
+			if (utilities.isBetween(ParsedSpeed, 1, 10)) {
 				return false;
 			} else {
-				sender.sendMessage(lang.Prefix + lang.SpeedOutOfRange);
+				lang.send(sender, Translations.Prefix, Translations.SpeedOutOfRange);
 			}
 		} catch(Exception e) {
-			sender.sendMessage(lang.Prefix + lang.InvalidSpeed);
+			lang.send(sender, Translations.Prefix, Translations.InvalidPlayer);
 		}
 		return true;
 	}
 	
 	
 	@Override
-	public boolean execute(CommandSender sender, String label, String[] args) {
+	public boolean execute(CommandSender sender, String cmdLabel, String[] args) {
+
+
 		if (args.length == 0) {
 			if (sender.hasPermission("minicore.speed")) {
-				sender.sendMessage(lang.Prefix + lang.SpeedNotDefined);
+				lang.send(sender, Translations.Prefix, Translations.SpeedNotDefined);
 			} else {
-				sender.sendMessage(lang.Prefix + lang.NoPerm);
+				lang.send(sender, Translations.Prefix, Translations.NoPerm);
 			}
 
 		} else if (args.length == 1) {
-			if (!(sender instanceof Player)) {
-				sender.sendMessage(lang.InvalidArgs);
+			if (!(sender instanceof Player p)) {
+				lang.send(sender, Translations.Prefix, Translations.InvalidArgs);
 				return false;
 			}
-			Player p = (Player)sender;
 
 			if (p.hasPermission("minicore.speed")) {
 				
@@ -112,19 +121,19 @@ public class Speed extends Command {
 					return true;
 				}
 				ChangeSpeed(p, SpeedType.Walking, speed);
-				Effect.sound(p, Settings.Sound.speed());
-				Effect.particle(Settings.Particle.speed(p.getLocation()));
+				effects.sound(p, Sounds.Speed);
+				effects.particle(p, Particles.Speed);
 				return true;
 				
 			} else {
-				p.sendMessage(lang.Prefix + lang.NoPerm);
+				lang.send(p, Translations.Prefix, Translations.NoPerm);
 			}
 			
 		} else if (args.length == 2) {
 			if (sender.hasPermission("minicore.speed.other")) {
-				sender.sendMessage(lang.Prefix + lang.InvalidArgs);
+				lang.send(sender, Translations.Prefix, Translations.InvalidArgs);
 			} else {
-				sender.sendMessage(lang.Prefix + lang.NoPerm);
+				lang.send(sender, Translations.Prefix, Translations.NoPerm);
 			}
 			
 		} else if (args.length == 3) {
@@ -135,53 +144,52 @@ public class Speed extends Command {
 
 				SpeedType type = SpeedType.getType(args[1]);
 				if (type == null) {
-					sender.sendMessage(lang.Prefix + lang.InvalidSpeedType);
+					lang.send(sender, Translations.Prefix, Translations.InvalidSpeedType);
 					return false;
 				}
 
 				Player target = Bukkit.getPlayer(args[2]);
 				if (target == null || !target.isOnline()) {
-					sender.sendMessage(lang.Prefix + lang.InvalidPlayer);
+					lang.send(sender, Translations.Prefix, Translations.InvalidPlayer);
 					return false;
 				}
 
-				StringHandler message = new StringHandler(lang.SpeedChangedOther);
-				message.setPrefix(lang.Prefix);
-				message.replaceAll("{player}", target.getName());
-				message.replaceAll("{type}", type.getName());
-				message.replaceAll("{speed}", speed.toString());
+				StringHandler message = new StringHandler(lang.get(Translations.SpeedChangedOther));
+				message.setPrefix(lang.get(Translations.Prefix));
+				message.replaceAll("%player%", target.getName());
+				message.replaceAll("%type%", type.getName(lang));
+				message.replaceAll("%speed%", speed.toString());
 
-				if (sender instanceof Player) {
-					Player p = (Player)sender;
+				if (sender instanceof Player p) {
 					if (!target.getUniqueId().equals(p.getUniqueId())) {
 
 						ChangeSpeed(target, type, speed);
 						message.send(p);
 
-						Effect.sound(target, Settings.Sound.speed());
-						Effect.sound(p, Settings.Sound.speed());
-						Effect.particle(Settings.Particle.speed(target.getLocation()));
+						effects.sound(target, Sounds.Speed);
+						effects.sound(p, Sounds.Speed);
+						effects.particle(target, Particles.Speed);
 					} else {
 						if (p.isFlying()) {
 							ChangeSpeed(p, SpeedType.Flying, speed);
 							return true;
 						}
 						ChangeSpeed(p, SpeedType.Walking, speed);
-						Effect.sound(p, Settings.Sound.speed());
-						Effect.particle(Settings.Particle.speed(p.getLocation()));
+						effects.sound(p, Sounds.Speed);
+						effects.particle(p, Particles.Speed);
 					}
 				} else {
 					ChangeSpeed(target, type, speed);
 					sender.sendMessage(message.build());
-					Effect.sound(target, Settings.Sound.speed());
-					Effect.particle(Settings.Particle.speed(target.getLocation()));
+					effects.sound(target, Sounds.Speed);
+					effects.particle(target, Particles.Speed);
 				}
 				return true;
 			} else {
-				sender.sendMessage(lang.Prefix + lang.NoPerm);
+				lang.send(sender, Translations.Prefix, Translations.NoPerm);
 			}
 		} else {
-			sender.sendMessage(lang.Prefix + lang.ToomanyArgs);
+			lang.send(sender, Translations.Prefix, Translations.ToomanyArgs);
 		}
 		
 		return false;
@@ -201,11 +209,20 @@ public class Speed extends Command {
 	@Override
 	public List<String> tabComplete(CommandSender sender, String alias, String[] args) throws IllegalArgumentException {
 		if (args.length == 1) {
-			return SpeedValues();
+			List<String> shorted = new ArrayList<>();
+			StringUtil.copyPartialMatches(args[0], SpeedValues(), shorted);
+			Collections.sort(shorted);
+			return shorted;
 		} else if (args.length == 2) {
-			return SpeedTypeNames();
+			List<String> shorted = new ArrayList<>();
+			StringUtil.copyPartialMatches(args[1], SpeedTypeNames(), shorted);
+			Collections.sort(shorted);
+			return shorted;
 		} else if (args.length == 3) {
-			return Utils.playerNameList();
+			List<String> shorted = new ArrayList<>();
+			StringUtil.copyPartialMatches(args[2], utils.playerNameList(), shorted);
+			Collections.sort(shorted);
+			return shorted;
 		}
 		return null;
 	}

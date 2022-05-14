@@ -1,54 +1,65 @@
 package net.natroutter.minicore.commands;
 
+import net.natroutter.minicore.Handler;
 import net.natroutter.minicore.MiniCore;
-import net.natroutter.minicore.utilities.Effect;
-import net.natroutter.minicore.utilities.Lang;
-import net.natroutter.minicore.utilities.Settings;
+import net.natroutter.minicore.files.Config;
+import net.natroutter.minicore.files.Translations;
+import net.natroutter.minicore.objects.Particles;
+import net.natroutter.minicore.objects.Sounds;
+import net.natroutter.minicore.utilities.Effects;
 import net.natroutter.minicore.utilities.Utils;
 import net.natroutter.natlibs.handlers.Database.YamlDatabase;
 
-import net.natroutter.natlibs.objects.ParticleSettings;
+import net.natroutter.natlibs.handlers.LangHandler.language.LangManager;
 import net.natroutter.natlibs.utilities.StringHandler;
-import net.natroutter.natlibs.utilities.Utilities;
 import org.bukkit.Bukkit;
+import org.bukkit.Effect;
 import org.bukkit.Location;
-import org.bukkit.Particle;
-import org.bukkit.Sound;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.util.StringUtil;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class Spawn extends Command {
 
-	public Spawn() {
-		super("");
+	private LangManager lang;
+	private Config config;
+	private Effects effects;
+	private YamlDatabase database;
+	private Utils utils;
+
+	public Spawn(Handler handler) {
+		super("Spawn");
+		lang = handler.getLang();
+		config = handler.getConfig();
+		effects = handler.getEffects();
+		database = handler.getYamlDatabase();
+		utils = handler.getUtils();
 	}
 
-	private final Lang lang = MiniCore.getLang();
-	private final YamlDatabase database = MiniCore.getYamlDatabase();
-
 	@Override
-	public boolean execute(CommandSender sender, String label, String[] args) {
+	public boolean execute(CommandSender sender, String cmdLabel, String[] args) {
 		if (args.length == 0) {
-			if (!(sender instanceof Player)) {
-				sender.sendMessage(lang.InvalidArgs);
+			if (!(sender instanceof Player p)) {
+				lang.send(sender, Translations.Prefix, Translations.InvalidArgs);
 				return false;
 			}
-			Player p = (Player)sender;
 			if (p.hasPermission("minicore.spawn")) {
 				Location loc = database.getLocation("General", "SpawnLoc");
 
 				if (loc != null) {
-					Effect.particle(Settings.Particle.teleportStart(p.getLocation()));
+					effects.particle(p, Particles.TeleportStart);
 					p.teleport(loc);
-					Effect.particle(Settings.Particle.teleportEnd(loc));
-					Effect.sound(p, Settings.Sound.teleported());
+					effects.particle(loc, Particles.TeleportEnd);
+					effects.sound(p, Sounds.Teleported);
 
-					p.sendMessage(lang.Prefix + lang.TeleportedToSpawn);
+					lang.send(sender, Translations.Prefix, Translations.TeleportedToSpawn);
 				} else {
-					p.sendMessage(lang.Prefix + lang.SpawnNotset);
+					lang.send(sender, Translations.Prefix, Translations.SpawnNotset);
 				}
 			}
 
@@ -56,41 +67,40 @@ public class Spawn extends Command {
 			if (sender.hasPermission("minicore.spawn.other")) {
 				Player target = Bukkit.getPlayer(args[0]);
 				if (target == null || !target.isOnline()) {
-					sender.sendMessage(lang.Prefix + lang.InvalidPlayer);
+					lang.send(sender, Translations.Prefix, Translations.InvalidPlayer);
 					return false;
 				}
 
 				Location loc = database.getLocation("General", "SpawnLoc");
 				if (loc != null) {
 
-					if (sender instanceof Player) {
-						Player p = (Player)sender;
-						Effect.sound(p, Settings.Sound.teleported());
+					if (sender instanceof Player p) {
+						effects.sound(p, Sounds.Teleported);
 
 						if (!target.getUniqueId().equals(p.getUniqueId())) {
-							Effect.particle(Settings.Particle.teleportStart(target.getLocation()));
+							effects.particle(target, Particles.TeleportStart);
 							target.teleport(loc);
-							Effect.sound(target, Settings.Sound.teleported());
-							StringHandler message = new StringHandler(lang.TeleportedToSpawnOther).setPrefix(lang.Prefix);
-							message.replaceAll("{player}", target.getName());
+							effects.sound(target, Sounds.Teleported);
+							StringHandler message = new StringHandler(lang.get(Translations.TeleportedToSpawnOther)).setPrefix(lang.get(Translations.Prefix));
+							message.replaceAll("%player%", target.getName());
 							message.send(p);
 						} else {
-							Effect.particle(Settings.Particle.teleportStart(p.getLocation()));
-							p.sendMessage(lang.Prefix + lang.TeleportedToSpawn);
+							effects.particle(p, Particles.TeleportStart);
+							lang.send(p, Translations.Prefix, Translations.TeleportedToSpawn);
 							p.teleport(loc);
 						}
 
-						Effect.particle(Settings.Particle.teleportEnd(loc));
+						effects.particle(loc, Particles.TeleportEnd);
 					}
 
 				} else {
-					sender.sendMessage(lang.Prefix + lang.SpawnNotset);
+					lang.send(sender, Translations.Prefix, Translations.SpawnNotset);
 				}
 			} else {
-				sender.sendMessage(lang.Prefix + lang.NoPerm);
+				lang.send(sender, Translations.Prefix, Translations.NoPerm);
 			}
 		} else {
-			sender.sendMessage(lang.Prefix + lang.ToomanyArgs);
+			lang.send(sender, Translations.Prefix, Translations.ToomanyArgs);
 		}
 		return false;
 	}
@@ -98,7 +108,10 @@ public class Spawn extends Command {
 	@Override
 	public List<String> tabComplete(CommandSender sender, String alias, String[] args) throws IllegalArgumentException {
 		if (args.length == 1) {
-			return Utils.playerNameList();
+			List<String> shorted = new ArrayList<>();
+			StringUtil.copyPartialMatches(args[0], utils.playerNameList(), shorted);
+			Collections.sort(shorted);
+			return shorted;
 		}
 		return null;
 	}

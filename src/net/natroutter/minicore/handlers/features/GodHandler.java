@@ -1,9 +1,8 @@
 package net.natroutter.minicore.handlers.features;
 
-import net.natroutter.minicore.MiniCore;
-import net.natroutter.minicore.handlers.Database.handlers.PlayerDataHandler;
-import net.natroutter.minicore.handlers.Database.tables.PlayerData;
+import net.natroutter.minicore.Handler;
 
+import net.natroutter.natlibs.handlers.Database.YamlDatabase;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -11,17 +10,16 @@ import org.bukkit.event.entity.EntityDamageEvent;
 
 public class GodHandler implements Listener {
 
-    PlayerDataHandler pdh = MiniCore.getDataHandler();
+    private YamlDatabase database;
+    public GodHandler(Handler handler) {
+        database = handler.getYamlDatabase();
+    }
 
     @EventHandler
     public void onDamage(EntityDamageEvent e) {
-        if (e.getEntity() instanceof Player) {
-            Player p = (Player)e.getEntity();
-            PlayerData data = pdh.get(p.getUniqueId());
-            if (data != null) {
-                if (data.getGod()) {
-                    e.setCancelled(true);
-                }
+        if (e.getEntity() instanceof Player p) {
+            if (database.getBoolean(p, "God")) {
+                e.setCancelled(true);
             }
         }
     }

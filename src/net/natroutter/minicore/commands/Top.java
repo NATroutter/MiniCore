@@ -1,11 +1,13 @@
 package net.natroutter.minicore.commands;
 
-import net.natroutter.minicore.MiniCore;
-import net.natroutter.minicore.utilities.*;
+import net.natroutter.minicore.Handler;
+import net.natroutter.minicore.files.Translations;
+import net.natroutter.minicore.utilities.Effects;
+import net.natroutter.minicore.objects.Particles;
+import net.natroutter.minicore.objects.Sounds;
 
-import org.bukkit.Bukkit;
+import net.natroutter.natlibs.handlers.LangHandler.language.LangManager;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -14,41 +16,43 @@ import java.util.List;
 
 public class Top extends Command {
 
-    public Top() {
-        super("");
+    private LangManager lang;
+    private Effects effects;
+
+    public Top(Handler handler) {
+        super("Top");
+        lang = handler.getLang();
+        effects = handler.getEffects();
     }
 
-    private final Lang lang = MiniCore.getLang();
-    private final Config config = MiniCore.getConf();
-
     @Override
-    public boolean execute(CommandSender sender, String label, String[] args) {
-        if (!sender.hasPermission("minicore.top")) {
-            sender.sendMessage(lang.Prefix + lang.NoPerm);
+    public boolean execute(CommandSender sender, String cmdLabel, String[] args) {
+        if (!(sender instanceof Player p)) {
+            lang.send(sender, Translations.Prefix, Translations.OnlyIngame);
             return false;
         }
 
-        if (!(sender instanceof Player)) {
-            sender.sendMessage(lang.OnlyIngame);
+        if (!sender.hasPermission("minicore.top")) {
+            lang.send(sender, Translations.Prefix, Translations.NoPerm);
             return false;
         }
-        Player p = (Player)sender;
 
         if (args.length == 0) {
 
-            Effect.particle(Settings.Particle.teleportStart(p.getLocation()));
+            effects.particle(p, Particles.TeleportStart);
 
             int highest = p.getWorld().getHighestBlockYAt(p.getLocation());
             Location ploc = p.getLocation();
             ploc.setY(highest+1);
             p.teleport(ploc);
 
-            Effect.particle(Settings.Particle.teleportEnd(ploc));
-            Effect.sound(p, Settings.Sound.teleported());
-            p.sendMessage(lang.Prefix + lang.TeleportedToTop);
+            effects.particle(ploc, Particles.TeleportEnd);
+            effects.sound(p, Sounds.Teleported);
+
+            lang.send(p, Translations.Prefix, Translations.TeleportedToTop);
 
         } else {
-            p.sendMessage(lang.Prefix + lang.ToomanyArgs);
+            lang.send(p, Translations.Prefix, Translations.ToomanyArgs);
         }
         return false;
     }

@@ -1,80 +1,48 @@
 package net.natroutter.minicore.utilities;
 
-import net.natroutter.minicore.MiniCore;
-import org.bukkit.Bukkit;
-import org.bukkit.GameMode;
-import org.bukkit.World;
-import org.bukkit.command.ConsoleCommandSender;
+import net.natroutter.minicore.Handler;
+import net.natroutter.minicore.files.Config;
+import net.natroutter.minicore.files.Translations;
+import net.natroutter.natlibs.handlers.LangHandler.language.LangManager;
+import net.natroutter.natlibs.handlers.ParticleSpawner;
+import net.natroutter.natlibs.objects.ParticleSettings;
+import org.bukkit.*;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.PluginDescriptionFile;
-import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Utils {
 
-    private static final Lang lang = MiniCore.getLang();
+    private LangManager lang;
 
-    public static boolean isValidPlayer(Player p) {
-        return Bukkit.getOnlinePlayers().contains(p);
+    public Utils(Handler handler) {
+        lang = handler.getLang();
     }
 
-    public static ArrayList<String> playerNameList() {
-        ArrayList<String> list = new ArrayList<>();
-        for (Player p : Bukkit.getOnlinePlayers()) {
-            list.add(p.getName());
-        }
-        return list;
+    public List<String> playerNameList() {
+        return Bukkit.getOnlinePlayers().stream().map(Player::getName).toList();
     }
-    public static ArrayList<String> worldNameList() {
-        ArrayList<String> list = new ArrayList<>();
-        for (World w : Bukkit.getWorlds()) {
-            list.add(w.getName());
-        }
-        return list;
+    public List<String> worldNameList() {
+        return Bukkit.getWorlds().stream().map(World::getName).toList();
     }
 
-    public static GameMode ValidateGamemode(String gm) {
-        switch(gm.toLowerCase()) {
-            case "s": case "0": case "survival":
-                return GameMode.SURVIVAL;
-            case "c": case "1": case "creative":
-                return GameMode.CREATIVE;
-            case "a": case "2": case "adventure":
-                return GameMode.ADVENTURE;
-            case "sp": case "3": case "spectator":
-                return GameMode.SPECTATOR;
-            default:
-                return null;
-        }
+    public GameMode ValidateGamemode(String gm) {
+        return switch (gm.toLowerCase()) {
+            case "s", "0", "survival" -> GameMode.SURVIVAL;
+            case "c", "1", "creative" -> GameMode.CREATIVE;
+            case "a", "2", "adventure" -> GameMode.ADVENTURE;
+            case "sp", "3", "spectator" -> GameMode.SPECTATOR;
+            default -> null;
+        };
     }
 
-    public static String getGamemodeName(GameMode gm) {
-        switch(gm) {
-            case SURVIVAL:
-                return lang.GameModes.Survival;
-            case CREATIVE:
-                return lang.GameModes.Creative;
-            case ADVENTURE:
-                return lang.GameModes.Adventure;
-            case SPECTATOR:
-                return lang.GameModes.Spectator;
-            default:
-                return null;
-        }
-    }
-
-    public static void FancyPluginMessage(JavaPlugin pl) {
-        ConsoleCommandSender Console = pl.getServer().getConsoleSender();
-        PluginDescriptionFile pdf = pl.getDescription();
-        Console.sendMessage("§5                                                  ");
-        Console.sendMessage("§5      __  __ _      _  ___                        ");
-        Console.sendMessage("§5     |  \\/  (_)_ _ (_)/ __|___ _ _ ___            ");
-        Console.sendMessage("§5     | |\\/| | | ' \\| | (__/ _ \\ '_/ -_)           ");
-        Console.sendMessage("§5     |_|  |_|_|_||_|_|\\___\\___/_| \\___|           ");
-        Console.sendMessage("§5                                                  ");
-        Console.sendMessage("§5            Loading version §d"+pdf.getVersion());
-        Console.sendMessage("§5     Minicore made with §d❤ §5by §dNATroutter         ");
-        Console.sendMessage("§5	                                                 ");
+    public String getGamemodeName(GameMode gm) {
+        return switch (gm) {
+            case SURVIVAL -> lang.get(Translations.GameModes_Survival);
+            case CREATIVE -> lang.get(Translations.GameModes_Creative);
+            case ADVENTURE -> lang.get(Translations.GameModes_Adventure);
+            case SPECTATOR -> lang.get(Translations.GameModes_Separator);
+        };
     }
 }

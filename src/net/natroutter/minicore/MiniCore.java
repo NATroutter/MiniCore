@@ -1,25 +1,14 @@
 package net.natroutter.minicore;
 
 import net.natroutter.minicore.commands.*;
-import net.natroutter.minicore.handlers.Database.handlers.PlayerDataHandler;
 import net.natroutter.minicore.handlers.features.*;
-import net.natroutter.minicore.handlers.Database.Database;
-import net.natroutter.minicore.handlers.Hooks;
-import net.natroutter.minicore.utilities.Config;
-import net.natroutter.minicore.utilities.Lang;
-import net.natroutter.minicore.utilities.Utils;
-import net.natroutter.natlibs.NATLibs;
-import net.natroutter.natlibs.handlers.Database.YamlDatabase;
-import net.natroutter.natlibs.handlers.EventManager;
-import net.natroutter.natlibs.handlers.FileManager;
-import net.natroutter.natlibs.objects.CondCommand;
-import net.natroutter.natlibs.objects.ConfType;
-import net.natroutter.natlibs.utilities.MojangAPI;
-import net.natroutter.natlibs.utilities.Utilities;
-import org.bukkit.block.data.type.Stairs;
+import net.natroutter.minicore.files.Config;
+import org.bukkit.Bukkit;
+import org.bukkit.command.CommandMap;
+import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
-public class MiniCore extends JavaPlugin implements NATLibs {
+public class MiniCore extends JavaPlugin {
 
     /*
         TODO
@@ -31,73 +20,46 @@ public class MiniCore extends JavaPlugin implements NATLibs {
 
     */
 
-    private static Hooks hooks;
-    private static Config config;
-    private static Lang lang;
-    private static YamlDatabase yamlDatabase;
-    private static Utilities utilities;
-    private static MojangAPI mojangAPI;
-    private static PlayerDataHandler playerDataHandler;
-
-    public static Hooks getHooks(){return hooks;}
-    public static Config getConf(){return config;}
-    public static Lang getLang(){return lang;}
-    public static YamlDatabase getYamlDatabase(){return yamlDatabase;}
-    public static Utilities getUtilities(){return utilities;}
-    public static MojangAPI getMojangAPI(){return mojangAPI;}
-    public static PlayerDataHandler getDataHandler(){return playerDataHandler;}
 
     @Override
     public void onEnable() {
-        registerLibrary(this);
+        Handler handler = new Handler(this);
+        Config cfg = handler.getConfig();
 
-        hooks = new Hooks(this);
-        config = new FileManager(this, ConfType.Config).load(Config.class);
-        lang = new FileManager(this, ConfType.Lang).load(Lang.class);
-        playerDataHandler = new PlayerDataHandler(this, new Database(this), 30 * 60);
-        yamlDatabase = new YamlDatabase(this);
-        utilities = new Utilities(this);
-        mojangAPI = new MojangAPI(this);
+        CommandMap map = Bukkit.getCommandMap();
+        PluginManager pm = Bukkit.getPluginManager();
+        String fallbackPrefix = "MiniCore";
 
-        EventManager evm = new EventManager(this);
-        evm.RegisterConditionalCommands(
-                new CondCommand(Addlore.class, config.EnabledFeatures.Addlore),
-                new CondCommand(Broadcast.class, config.EnabledFeatures.broadcast),
-                new CondCommand(Cleanchat.class, config.EnabledFeatures.CleanChat),
-                new CondCommand(Cleaninventory.class, config.EnabledFeatures.CleanInventory),
-                new CondCommand(Cleanitem.class, config.EnabledFeatures.CleanItem),
-                new CondCommand(Day.class, config.EnabledFeatures.Day),
-                new CondCommand(Enderchest.class, config.EnabledFeatures.EnderChest),
-                new CondCommand(Feed.class, config.EnabledFeatures.Feed),
-                new CondCommand(Fly.class, config.EnabledFeatures.Fly),
-                new CondCommand(Gamemode.class, config.EnabledFeatures.Gamemode),
-                new CondCommand(God.class, config.EnabledFeatures.God),
-                new CondCommand(Heal.class, config.EnabledFeatures.Heal),
-                new CondCommand(Invsee.class, config.EnabledFeatures.Invsee),
-                new CondCommand(List.class, config.EnabledFeatures.List),
-                new CondCommand(Night.class, config.EnabledFeatures.Night),
-                new CondCommand(Rename.class, config.EnabledFeatures.Rename),
-                new CondCommand(Setlore.class, config.EnabledFeatures.SetLore),
-                new CondCommand(Setspawn.class, config.EnabledFeatures.SetSpawn),
-                new CondCommand(Show.class, config.EnabledFeatures.Show),
-                new CondCommand(Spawn.class, config.EnabledFeatures.Spawn),
-                new CondCommand(Speed.class, config.EnabledFeatures.Speed),
-                new CondCommand(Top.class, config.EnabledFeatures.Top),
-                new CondCommand(Tpall.class, config.EnabledFeatures.Tpall),
-                new CondCommand(Tphere.class, config.EnabledFeatures.Tphere)
-        );
-        if (config.UseChatFormating) {
-            evm.RegisterListeners(ChatFormater.class); //TODO replace this with conditional system like above!!!
-        }
-        evm.RegisterListeners(
-                GodHandler.class,
-                InfoHandler.class,
-                SignColors.class,
-                StatusMessages.class,
-                SpawnHandler.class
-        );
+        if (cfg.EnabledFeatures.Addlore) {map.register(fallbackPrefix, new Addlore(handler));}
+        if (cfg.EnabledFeatures.broadcast) {map.register(fallbackPrefix, new Broadcast(handler));}
+        if (cfg.EnabledFeatures.CleanChat) {map.register(fallbackPrefix, new Cleanchat(handler));}
+        if (cfg.EnabledFeatures.CleanInventory) {map.register(fallbackPrefix, new Cleaninventory(handler));}
+        if (cfg.EnabledFeatures.CleanItem) {map.register(fallbackPrefix, new Cleanitem(handler));}
+        if (cfg.EnabledFeatures.Day) {map.register(fallbackPrefix, new Day(handler));}
+        if (cfg.EnabledFeatures.EnderChest) {map.register(fallbackPrefix, new Enderchest(handler));}
+        if (cfg.EnabledFeatures.Feed) {map.register(fallbackPrefix, new Feed(handler));}
+        if (cfg.EnabledFeatures.Fly) {map.register(fallbackPrefix, new Fly(handler));}
+        if (cfg.EnabledFeatures.Gamemode) {map.register(fallbackPrefix, new Gamemode(handler));}
+        if (cfg.EnabledFeatures.God) {map.register(fallbackPrefix, new God(handler));}
+        if (cfg.EnabledFeatures.Heal) {map.register(fallbackPrefix, new Heal(handler));}
+        if (cfg.EnabledFeatures.Invsee) {map.register(fallbackPrefix, new Invsee(handler));}
+        if (cfg.EnabledFeatures.List) {map.register(fallbackPrefix, new List(handler));}
+        if (cfg.EnabledFeatures.Night) {map.register(fallbackPrefix, new Night(handler));}
+        if (cfg.EnabledFeatures.Rename) {map.register(fallbackPrefix, new Rename(handler));}
+        if (cfg.EnabledFeatures.SetLore) {map.register(fallbackPrefix, new Setlore(handler));}
+        if (cfg.EnabledFeatures.SetSpawn) {map.register(fallbackPrefix, new Setspawn(handler));}
+        if (cfg.EnabledFeatures.Spawn) {map.register(fallbackPrefix, new Spawn(handler));}
+        if (cfg.EnabledFeatures.Speed) {map.register(fallbackPrefix, new Speed(handler));}
+        if (cfg.EnabledFeatures.Top) {map.register(fallbackPrefix, new Top(handler));}
+        if (cfg.EnabledFeatures.Tpall) {map.register(fallbackPrefix, new Tpall(handler));}
+        if (cfg.EnabledFeatures.Tphere) {map.register(fallbackPrefix, new Tphere(handler));}
 
-        Utils.FancyPluginMessage(this);
+        if (cfg.UseChatFormating) {pm.registerEvents(new ChatFormater(handler), this);}
+
+        pm.registerEvents(new GodHandler(handler), this);
+        pm.registerEvents(new SignColors(), this);
+        pm.registerEvents(new StatusMessages(handler), this);
+        pm.registerEvents(new SpawnHandler(handler), this);
 
     }
 }

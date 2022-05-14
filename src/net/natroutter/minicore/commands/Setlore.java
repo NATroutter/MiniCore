@@ -1,13 +1,16 @@
 package net.natroutter.minicore.commands;
 
+import net.natroutter.minicore.Handler;
 import net.natroutter.minicore.MiniCore;
-import net.natroutter.minicore.utilities.Effect;
-import net.natroutter.minicore.utilities.Lang;
-import net.natroutter.minicore.utilities.Settings;
-import net.natroutter.minicore.utilities.Utils;
+import net.natroutter.minicore.files.Config;
+import net.natroutter.minicore.files.Translations;
+import net.natroutter.minicore.objects.Sounds;
+import net.natroutter.minicore.utilities.Effects;
+import net.natroutter.natlibs.handlers.LangHandler.language.LangManager;
 import net.natroutter.natlibs.objects.BaseItem;
 
 import net.natroutter.natlibs.utilities.StringHandler;
+import org.bukkit.Effect;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -17,28 +20,29 @@ import java.util.List;
 
 public class Setlore extends Command {
 
-	private final Lang lang = MiniCore.getLang();
-	
-	public Setlore() {
-		super("");
+	private LangManager lang;
+	private Effects effects;
+
+	public Setlore(Handler handler) {
+		super("setlore");
+		lang = handler.getLang();
+		effects = handler.getEffects();
 	}
 	
 	@Override
-	public boolean execute(CommandSender sender, String label, String[] args) {
-		if (!sender.hasPermission("minicore.setlore")) {
-			sender.sendMessage(lang.Prefix + lang.NoPerm);
+	public boolean execute(CommandSender sender, String cmdLabel, String[] args) {
+		if (!(sender instanceof Player p)) {
+			lang.send(sender, Translations.Prefix, Translations.OnlyIngame);
 			return false;
 		}
 
-		if (!(sender instanceof Player)) {
-			sender.sendMessage(lang.OnlyIngame);
+		if (!sender.hasPermission("minicore.setlore")) {
+			lang.send(sender, Translations.Prefix, Translations.NoPerm);
 			return false;
 		}
 		
-		Player p = (Player)sender;
-		
 		if (args.length == 0) {
-			p.sendMessage(lang.Prefix + lang.InvalidArgs);
+			lang.send(p, Translations.Prefix, Translations.InvalidArgs);
 			
 		} else {
 			StringHandler lore = new StringHandler(args, ' ');
@@ -51,11 +55,11 @@ public class Setlore extends Command {
 			if (!item.getType().equals(Material.AIR)) {
 				item.setLore(lore.split('|'));
 				p.updateInventory();
-				p.sendMessage(lang.Prefix + lang.LoreChanged);
-				Effect.sound(p, Settings.Sound.modified());
+				lang.send(p, Translations.Prefix, Translations.LoreChanged);
+				effects.sound(p, Sounds.Modified);
 
 			} else {
-				p.sendMessage(lang.Prefix + lang.InvalidItem);
+				lang.send(p, Translations.Prefix, Translations.InvalidItem);
 			}
 
 		}

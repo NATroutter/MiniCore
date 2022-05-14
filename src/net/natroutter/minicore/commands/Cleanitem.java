@@ -1,17 +1,12 @@
 package net.natroutter.minicore.commands;
 
+import net.natroutter.minicore.Handler;
 import net.natroutter.minicore.MiniCore;
-import net.natroutter.minicore.utilities.Effect;
-import net.natroutter.minicore.utilities.Lang;
-import net.natroutter.minicore.utilities.Settings;
-import net.natroutter.minicore.utilities.Utils;
-import net.natroutter.natlibs.handlers.Database.YamlDatabase;
-import net.natroutter.natlibs.objects.ParticleSettings;
-import net.natroutter.natlibs.utilities.Utilities;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Particle;
-import org.bukkit.Sound;
+import net.natroutter.minicore.files.Translations;
+import net.natroutter.minicore.objects.Sounds;
+import net.natroutter.minicore.utilities.Effects;
+import net.natroutter.natlibs.handlers.LangHandler.language.LangManager;
+import org.bukkit.Effect;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -23,25 +18,27 @@ import java.util.List;
 
 public class Cleanitem extends Command {
 
-    public Cleanitem() {
-        super("");
+    private LangManager lang;
+    private Effects effects;
+
+    public Cleanitem(Handler handler) {
+        super("Cleanitem");
         this.setAliases(Collections.singletonList("citem"));
+        lang = handler.getLang();
+        effects = handler.getEffects();
     }
 
-    private final Lang lang = MiniCore.getLang();
-
     @Override
-    public boolean execute(CommandSender sender, String label, String[] args) {
-        if (!sender.hasPermission("minicore.cleanitem")) {
-            sender.sendMessage(lang.Prefix + lang.NoPerm);
+    public boolean execute(CommandSender sender, String cmdLabel, String[] args) {
+        if (!(sender instanceof Player p)) {
+            lang.send(sender, Translations.Prefix, Translations.OnlyIngame);
             return false;
         }
 
-        if (!(sender instanceof Player)) {
-            sender.sendMessage(lang.OnlyIngame);
+        if (!sender.hasPermission("minicore.cleanitem")) {
+            lang.send(sender, Translations.Prefix, Translations.NoPerm);
             return false;
         }
-        Player p = (Player)sender;
 
         if (args.length == 0) {
 
@@ -55,13 +52,13 @@ public class Cleanitem extends Command {
                     meta.setLore(null);
                 }
                 item.setItemMeta(meta);
-                Effect.sound(p, Settings.Sound.modified());
-                p.sendMessage(lang.Prefix + lang.ItemCleaned);
+                effects.sound(p, Sounds.Modified);
+                lang.send(p, Translations.Prefix, Translations.ItemCleaned);
             } else {
-                p.sendMessage(lang.Prefix + lang.ItemAlreadyClean);
+                lang.send(p, Translations.Prefix, Translations.ItemAlreadyClean);
             }
         } else {
-            p.sendMessage(lang.Prefix + lang.ToomanyArgs);
+            lang.send(p, Translations.Prefix, Translations.ToomanyArgs);
         }
         return false;
     }

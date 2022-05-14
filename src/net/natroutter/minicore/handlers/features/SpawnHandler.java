@@ -1,7 +1,8 @@
 package net.natroutter.minicore.handlers.features;
 
+import net.natroutter.minicore.Handler;
 import net.natroutter.minicore.MiniCore;
-import net.natroutter.minicore.utilities.Config;
+import net.natroutter.minicore.files.Config;
 import net.natroutter.natlibs.handlers.Database.YamlDatabase;
 
 import org.bukkit.Location;
@@ -12,8 +13,13 @@ import org.bukkit.event.player.PlayerRespawnEvent;
 
 public class SpawnHandler implements Listener {
 
-    private Config config = MiniCore.getConf();
-    private YamlDatabase database = MiniCore.getYamlDatabase();
+    private Config config;
+    private YamlDatabase database;
+
+    public SpawnHandler(Handler handler) {
+        config = handler.getConfig();
+        database = handler.getYamlDatabase();
+    }
 
     @EventHandler
     public void onRespawn(PlayerRespawnEvent e) {

@@ -1,36 +1,44 @@
 package net.natroutter.minicore.commands;
 
+import net.natroutter.minicore.Handler;
 import net.natroutter.minicore.MiniCore;
-import net.natroutter.minicore.utilities.Config;
-import net.natroutter.minicore.utilities.Effect;
-import net.natroutter.minicore.utilities.Lang;
-import net.natroutter.minicore.utilities.Settings;
+import net.natroutter.minicore.files.Config;
+import net.natroutter.minicore.files.Translations;
+import net.natroutter.minicore.objects.Sounds;
+import net.natroutter.minicore.utilities.Effects;
+import net.natroutter.natlibs.handlers.LangHandler.language.LangManager;
 import net.natroutter.natlibs.utilities.StringHandler;
 import org.bukkit.Bukkit;
+import org.bukkit.Effect;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.Collections;
 import java.util.List;
 
 public class Broadcast extends Command {
 
-    public Broadcast() {
-        super("");
+    private LangManager lang;
+    private Config config;
+    private Effects effects;
+
+    public Broadcast(Handler handler) {
+        super("Broadcast");
+        lang = handler.getLang();
+        config = handler.getConfig();
+        effects = handler.getEffects();
     }
 
-    private final Lang lang = MiniCore.getLang();
-    private final Config config = MiniCore.getConf();
-
     @Override
-    public boolean execute(CommandSender sender, String label, String[] args) {
+    public boolean execute(CommandSender sender, String cmdLabel, String[] args) {
         if (!sender.hasPermission("minicore.broadcast")) {
-            sender.sendMessage(lang.Prefix + lang.NoPerm);
+            lang.send(sender, Translations.Prefix, Translations.NoPerm);
             return false;
         }
 
         if (args.length == 0) {
-            sender.sendMessage(lang.Prefix + lang.InvalidBroadcastMessage);
+            lang.send(sender, Translations.Prefix, Translations.InvalidBroadcastMessage);
 
         } else {
             StringHandler message = new StringHandler(args, ' ');
@@ -39,10 +47,10 @@ public class Broadcast extends Command {
             }
 
             StringHandler broadcast = new StringHandler(config.BroadcastFormat);
-            broadcast.replaceAll("{message}", message.build());
+            broadcast.replaceAll("%message%", message.build());
             for (Player onlineP : Bukkit.getOnlinePlayers()) {
                 broadcast.send(onlineP);
-                Effect.sound(onlineP, Settings.Sound.broadcast());
+                effects.sound(onlineP, Sounds.Broadcast);
             }
         }
         return false;

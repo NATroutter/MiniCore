@@ -1,47 +1,53 @@
 package net.natroutter.minicore.commands;
 
-import net.natroutter.minicore.MiniCore;
-import net.natroutter.minicore.utilities.*;
+import net.natroutter.minicore.Handler;
+import net.natroutter.minicore.files.Config;
+import net.natroutter.minicore.files.Translations;
+import net.natroutter.minicore.utilities.Effects;
+import net.natroutter.minicore.objects.Sounds;
 
-import net.natroutter.natlibs.utilities.StringHandler;
+import net.natroutter.natlibs.handlers.LangHandler.language.LangManager;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.util.BoundingBox;
 
 import java.util.List;
 
 public class Tpall extends Command {
 
-    public Tpall() {
-        super("");
+    private LangManager lang;
+    private Config config;
+    private Effects effects;
+
+    public Tpall(Handler handler) {
+        super("Tpall");
+        lang = handler.getLang();
+        config = handler.getConfig();
+        effects = handler.getEffects();
     }
 
-    private final Lang lang = MiniCore.getLang();
-    private final Config config = MiniCore.getConf();
 
     @Override
-    public boolean execute(CommandSender sender, String label, String[] args) {
-        if (!sender.hasPermission("minicore.tpall")) {
-            sender.sendMessage(lang.Prefix + lang.NoPerm);
+    public boolean execute(CommandSender sender, String cmdLabel, String[] args) {
+        if (!(sender instanceof Player p)) {
+            lang.send(sender, Translations.Prefix, Translations.OnlyIngame);
             return false;
         }
 
-        if (!(sender instanceof Player)) {
-            sender.sendMessage(lang.OnlyIngame);
+        if (!sender.hasPermission("minicore.tpall")) {
+            lang.send(sender, Translations.Prefix, Translations.NoPerm);
             return false;
         }
-        Player p = (Player)sender;
 
         if (args.length == 0) {
             for (Player onlineP : Bukkit.getOnlinePlayers()) {
                 onlineP.teleport(p);
-                Effect.sound(onlineP, Settings.Sound.teleported());
+                effects.sound(onlineP, Sounds.Teleported);
             }
-            p.sendMessage(lang.Prefix + lang.AllPlayersTeleported);
+            lang.send(p, Translations.Prefix, Translations.AllPlayersTeleported);
         } else {
-            p.sendMessage(lang.Prefix + lang.ToomanyArgs);
+            lang.send(p, Translations.Prefix, Translations.ToomanyArgs);
         }
         return false;
     }
