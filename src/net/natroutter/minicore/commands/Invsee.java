@@ -51,23 +51,22 @@ public class Invsee extends Command {
 					lang.send(p, Translations.Prefix, Translations.InvalidPlayer);
 					return false;
 				}
-				
-				p.openInventory(target.getInventory());
+
 				if (!p.getUniqueId().equals(target.getUniqueId())) {
 					StringHandler message = new StringHandler(lang.get(Translations.PlayerInvOpened));
 					message.setPrefix(lang.get(Translations.Prefix));
 					message.replaceAll("%player%", target.getName());
 					message.send(p);
+
+					p.openInventory(target.getInventory());
+					effects.sound(p, Sounds.Chest);
+
 				} else {
 					lang.send(p, Translations.Prefix, Translations.CantTargetYourSelf);
 				}
-
-				effects.sound(p, Sounds.Chest);
-				
 			} else {
 				lang.send(p, Translations.Prefix, Translations.NoPerm);
 			}
-			
 		} else {
 			lang.send(p, Translations.Prefix, Translations.ToomanyArgs);
 		}

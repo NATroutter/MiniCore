@@ -41,13 +41,6 @@ public class Speed extends Command {
 		Flying,
 		Walking;
 
-		public String getName(LangManager lang) {
-			switch (this) {
-				case Flying -> lang.get(Translations.SpeedTypes_Flying);
-				case Walking -> lang.get(Translations.SpeedTypes_Walking);
-			}
-			return null;
-		}
 		public boolean isFlying() {
 			return this.equals(Flying);
 		}
@@ -62,11 +55,18 @@ public class Speed extends Command {
 		}
 		
 	}
+
+	private String langName(SpeedType type) {
+		if (type.isFlying()) {
+			return lang.get(Translations.SpeedTypes_Flying);
+		}
+		return lang.get(Translations.SpeedTypes_Walking);
+	}
 	
 	private void ChangeSpeed(Player p, SpeedType type, Integer speed) {
 		StringHandler message = new StringHandler(lang.get(Translations.SpeedChanged));
 		message.setPrefix(lang.get(Translations.Prefix));
-		message.replaceAll("%type%", type.getName(lang));
+		message.replaceAll("%type%", langName(type));
 		message.replaceAll("%speed%", speed);
 		
 		Float parsedSpeed = utilities.parseSpeed(speed, type.isFlying());
@@ -118,9 +118,9 @@ public class Speed extends Command {
 						
 				if (p.isFlying()) {
 					ChangeSpeed(p, SpeedType.Flying, speed);
-					return true;
+				} else {
+					ChangeSpeed(p, SpeedType.Walking, speed);
 				}
-				ChangeSpeed(p, SpeedType.Walking, speed);
 				effects.sound(p, Sounds.Speed);
 				effects.particle(p, Particles.Speed);
 				return true;
@@ -157,7 +157,7 @@ public class Speed extends Command {
 				StringHandler message = new StringHandler(lang.get(Translations.SpeedChangedOther));
 				message.setPrefix(lang.get(Translations.Prefix));
 				message.replaceAll("%player%", target.getName());
-				message.replaceAll("%type%", type.getName(lang));
+				message.replaceAll("%type%", langName(type));
 				message.replaceAll("%speed%", speed.toString());
 
 				if (sender instanceof Player p) {
