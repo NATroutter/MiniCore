@@ -6,4 +6,4 @@
 
 Simple and light core plugin
 
-</div>
+ </div>
