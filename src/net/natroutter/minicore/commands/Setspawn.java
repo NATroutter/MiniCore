@@ -7,9 +7,8 @@ import net.natroutter.minicore.files.Translations;
 import net.natroutter.minicore.objects.Particles;
 import net.natroutter.minicore.objects.Sounds;
 import net.natroutter.minicore.utilities.Effects;
-import net.natroutter.natlibs.handlers.Database.YamlDatabase;
-
-import net.natroutter.natlibs.handlers.LangHandler.language.LangManager;
+import net.natroutter.natlibs.handlers.database.YamlDatabase;
+import net.natroutter.natlibs.handlers.langHandler.language.LangManager;
 import org.bukkit.Effect;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;

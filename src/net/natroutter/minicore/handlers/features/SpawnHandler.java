@@ -3,8 +3,8 @@ package net.natroutter.minicore.handlers.features;
 import net.natroutter.minicore.Handler;
 import net.natroutter.minicore.MiniCore;
 import net.natroutter.minicore.files.Config;
-import net.natroutter.natlibs.handlers.Database.YamlDatabase;
 
+import net.natroutter.natlibs.handlers.database.YamlDatabase;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;

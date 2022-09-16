@@ -3,9 +3,8 @@ package net.natroutter.minicore.handlers.features;
 import net.natroutter.minicore.Handler;
 import net.natroutter.minicore.files.Config;
 import net.natroutter.minicore.files.Translations;
-import net.natroutter.natlibs.handlers.Database.YamlDatabase;
-
-import net.natroutter.natlibs.handlers.LangHandler.language.LangManager;
+import net.natroutter.natlibs.handlers.database.YamlDatabase;
+import net.natroutter.natlibs.handlers.langHandler.language.LangManager;
 import net.natroutter.natlibs.utilities.StringHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;

@@ -6,7 +6,7 @@ import net.natroutter.minicore.files.Config;
 import net.natroutter.minicore.files.Translations;
 import net.natroutter.minicore.objects.Sounds;
 import net.natroutter.minicore.utilities.*;
-import net.natroutter.natlibs.handlers.LangHandler.language.LangManager;
+import net.natroutter.natlibs.handlers.langHandler.language.LangManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Effect;
 import org.bukkit.World;

@@ -8,7 +8,7 @@ import net.natroutter.minicore.objects.Particles;
 import net.natroutter.minicore.objects.Sounds;
 import net.natroutter.minicore.utilities.*;
 
-import net.natroutter.natlibs.handlers.LangHandler.language.LangManager;
+import net.natroutter.natlibs.handlers.langHandler.language.LangManager;
 import net.natroutter.natlibs.utilities.StringHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
