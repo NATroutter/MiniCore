@@ -18,6 +18,8 @@ public class MiniCore extends JavaPlugin {
         Add cooldowns for some commands with configs
         move check for teleporting
 
+        #pipeline test #1
+
     */
 
 
